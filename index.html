@@ -731,9 +731,7 @@
 
     <main class="eks-prefix">
 
-        <!-- =========================================================================
-           SLIDER (DESTAQUES)
-        ========================================================================= -->
+        <!-- SLIDER -->
         <section class="hero-slider" aria-label="Destaques e eventos">
             <div class="hero-slides" id="heroSlides">
                 <div class="hero-loading" id="heroLoading">Carregando destaques...</div>
@@ -741,38 +739,28 @@
             <div class="hero-dots" id="heroDots" aria-hidden="true"></div>
         </section>
 
-        <!-- =========================================================================
-           PRÓXIMOS EVENTOS
-        ========================================================================= -->
+        <!-- PRÓXIMOS EVENTOS -->
         <section class="eks-events" aria-label="Próximos eventos">
             <div class="section-divider" role="separator" aria-label="Faixa">
                 <h2 class="band-title">Próximos Eventos</h2>
             </div>
             <div class="eks-events-wrap">
-                <div class="eks-events-grid" id="eventos-container">
-                    <!-- Eventos inseridos dinamicamente via JS -->
-                </div>
+                <div class="eks-events-grid" id="eventos-container"></div>
             </div>
         </section>
 
-        <!-- =========================================================================
-           OUTRAS INSCRIÇÕES
-        ========================================================================= -->
+        <!-- OUTRAS INSCRIÇÕES -->
         <section>
             <div class="section-divider" role="separator" aria-label="Faixa">
                 <h2 class="band-title">Outras Inscrições</h2>
             </div>
             <br>
             <section class="inscricoes-section" aria-label="Inscrições">
-                <div class="buttons-container" id="teste-links">
-                    <!-- Botões inseridos dinamicamente via JS -->
-                </div>
+                <div class="buttons-container" id="teste-links"></div>
             </section>
         </section>
 
-        <!-- =========================================================================
-           ASSISTA AS MENSAGENS (YOUTUBE)
-        ========================================================================= -->
+        <!-- YOUTUBE -->
         <section>
             <div class="section-divider section-divider--title" role="separator" aria-label="Faixa Assista as Mensagens">
                 <h2 class="band-title">Assista as Mensagens</h2>
@@ -782,7 +770,7 @@
                 <div class="yt-wrap">
                     <div class="yt-header">
                         <div class="yt-actions">
-                            <a class="yt-channel-btn" href="https://www.youtube.com/@IBGOFICIAL" target="_blank" rel="noopener">
+                            <a class="yt-channel-btn" href="https://www.youtube.com/@IBGOFICIAL" target="_top" rel="noopener">
                                 ▶ Ver canal no YouTube
                             </a>
                         </div>
@@ -790,9 +778,7 @@
 
                     <div class="yt-rail">
                         <button class="yt-nav yt-prev" type="button" aria-label="Voltar vídeos">‹</button>
-                        <div class="yt-slider" id="ytSlider" tabindex="0" aria-label="Lista de vídeos">
-                            <!-- Vídeos inseridos via JS -->
-                        </div>
+                        <div class="yt-slider" id="ytSlider" tabindex="0" aria-label="Lista de vídeos"></div>
                         <button class="yt-nav yt-next" type="button" aria-label="Avançar vídeos">›</button>
                     </div>
 
@@ -801,9 +787,7 @@
             </section>
         </section>
 
-        <!-- =========================================================================
-           HORÁRIOS DA IGREJA
-        ========================================================================= -->
+        <!-- HORÁRIOS -->
         <section>
             <div class="section-divider section-divider--title" role="separator" aria-label="Faixa Horários">
                 <h2 class="band-title">Horários</h2>
@@ -812,7 +796,6 @@
             <section class="horarios-section" aria-label="Horários">
                 <div class="glass-card">
                     <div class="schedule-wrapper">
-
                         <div class="schedule-block">
                             <h3>Celebrações Domingos</h3>
                             <ul class="schedule-list">
@@ -852,15 +835,12 @@
                                 </li>
                             </ul>
                         </div>
-
                     </div>
                 </div>
             </section>
         </section>
 
-        <!-- =========================================================================
-           CONTRIBUIÇÕES (PIX / BANCOS)
-        ========================================================================= -->
+        <!-- CONTRIBUIÇÕES -->
         <section>
             <div class="section-divider section-divider--title" role="separator" aria-label="Faixa Contribuições">
                 <h2 class="band-title">Contribua</h2>
@@ -868,7 +848,6 @@
             <section class="contribuir-section" aria-label="Contribuições">
                 <div class="glass-card">
                     <div class="banking-details">
-
                         <div class="bank-item">
                             <h4>Chaves Pix</h4>
                             <ul class="schedule-list">
@@ -910,15 +889,12 @@
                                 </li>
                             </ul>
                         </div>
-
                     </div>
                 </div>
             </section>
         </section>
 
-        <!-- =========================================================================
-           LIDERANÇA / LINKS RÁPIDOS
-        ========================================================================= -->
+        <!-- LIDERANÇA -->
         <section>
             <div class="section-divider section-divider--title" role="separator" aria-label="Faixa Liderança">
                 <h2 class="band-title">Liderança</h2>
@@ -927,8 +903,8 @@
             <section class="horarios-section" aria-label="Liderança">
                 <div class="glass-card">
                     <div class="schedule-wrapper">
-                        <a href="https://sites.google.com/view/dashibg/pgs-e-microgrupos" class="pill-button" target="_blank" rel="noopener">👥 PGs e Microgrupos</a>
-                        <a href="https://sites.google.com/view/dashibg/in%C3%ADcio" class="pill-button" target="_blank" rel="noopener">🎯 Ministérios</a>
+                        <a href="https://sites.google.com/view/dashibg/pgs-e-microgrupos" class="pill-button" target="_top" rel="noopener">👥 PGs e Microgrupos</a>
+                        <a href="https://sites.google.com/view/dashibg/in%C3%ADcio" class="pill-button" target="_top" rel="noopener">🎯 Ministérios</a>
                     </div>
                 </div>
             </section>
@@ -938,15 +914,21 @@
 
     </main>
 
-    <!-- =========================================================================
-       SCRIPTS JAVASCRIPT
-    ========================================================================= -->
     <script>
-        const VERSAO_SISTEMA = "Versão.202608312357";
+        const VERSAO_SISTEMA = "Versão.202609052213";
 
-        /* -------------------------------------------------------------------------
-           SLIDER API
-        ------------------------------------------------------------------------- */
+        // Função utilitária para tratar URLs
+        function tratarUrl(url) {
+            if (!url) return "#";
+            let limpa = String(url).trim().replace(/^(https?:\/\/)+/i, '');
+            return "https://" + limpa;
+        }
+
+        function esc(val){
+            return String(val || "").replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#039;");
+        }
+
+        /* SLIDER API */
         (function(){
             const API = "https://script.google.com/macros/s/AKfycbwvCWOVrZPGuqsvMitk-j01QwGVhW6sgv_ELXzCAv5oXgSGT9Rcud_jLSbCdroYvZjd/exec?tipo=slider";
             const SLIDE_INTERVAL_MS = 3000;
@@ -969,13 +951,9 @@
                         return;
                     }
 
-                    function escapeHtml(val){
-                        return String(val || "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;");
-                    }
-
                     slidesWrap.innerHTML = slides.map((slide, index) => `
-                        <a class="hero-slide ${index === 0 ? "is-active" : ""}" href="https://${escapeHtml(String(slide.link || "#").trim())}" target="_blank" rel="noopener" aria-label="${escapeHtml(slide.nome || "Destaque")}">
-                            <img src="${escapeHtml(String(slide["url da imagem"]).trim())}" alt="${escapeHtml(slide.nome || "Destaque")}">
+                        <a class="hero-slide ${index === 0 ? "is-active" : ""}" href="${esc(tratarUrl(slide.link))}" target="_top" rel="noopener" aria-label="${esc(slide.nome || "Destaque")}">
+                            <img src="${esc(String(slide["url da imagem"]).trim())}" alt="${esc(slide.nome || "Destaque")}">
                         </a>
                     `).join("");
 
@@ -1010,18 +988,12 @@
                 });
         })();
 
-        /* -------------------------------------------------------------------------
-           EVENTOS API
-        ------------------------------------------------------------------------- */
+        /* EVENTOS API */
         (function(){
             const API_EVENTOS = "https://script.google.com/macros/s/AKfycbwvCWOVrZPGuqsvMitk-j01QwGVhW6sgv_ELXzCAv5oXgSGT9Rcud_jLSbCdroYvZjd/exec?tipo=eventos";
             const container = document.getElementById("eventos-container");
 
             if(!container) return;
-
-            function esc(val){
-                return String(val || "").replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#039;");
-            }
 
             function formatarData(data){
                 if(!data) return "";
@@ -1033,12 +1005,6 @@
                     }
                 }
                 return val;
-            }
-
-            function tratarUrl(url) {
-                if (!url) return "#";
-                let limpa = url.trim().replace(/^(https?:\/\/)+/i, '');
-                return "https://" + limpa;
             }
 
             function criarEvento(evento){
@@ -1060,7 +1026,7 @@
                         <div class="eks-event-divider"></div>
                         <div class="eks-event-name">${esc(nome)} 
                             <br>
-                            ${mostrarBotao ? `<a class="eks-event-button" href="${esc(urlFinal)}" target="_blank" rel="noopener">Inscreva-se</a>` : ""}
+                            ${mostrarBotao ? `<a class="eks-event-button" href="${esc(urlFinal)}" target="_top" rel="noopener">Inscreva-se</a>` : ""}
                         </div>
                     </div>
                 </article>
@@ -1083,9 +1049,7 @@
                 });
         })();
 
-        /* -------------------------------------------------------------------------
-           BOTÕES/INSCRIÇÕES API
-        ------------------------------------------------------------------------- */
+        /* BOTÕES/INSCRIÇÕES API */
         (function(){
             const API_LINKS = "https://script.google.com/macros/s/AKfycbwvCWOVrZPGuqsvMitk-j01QwGVhW6sgv_ELXzCAv5oXgSGT9Rcud_jLSbCdroYvZjd/exec";
             const container = document.getElementById("teste-links");
@@ -1100,8 +1064,8 @@
                         .sort((a,b) => Number(a.ordem || 9999) - Number(b.ordem || 9999))
                         .forEach(link => {
                             const a = document.createElement("a");
-                            a.href = String(link.url || "#").trim();
-                            a.target = "_blank";
+                            a.href = tratarUrl(link.url);
+                            a.target = "_top";
                             a.rel = "noopener";
                             a.className = "pill-button";
                             a.appendChild(document.createTextNode(`${link.icone || ""} ${link.nome || ""}`));
@@ -1116,9 +1080,7 @@
                 .catch(err => console.error("Erro nos links:", err));
         })();
 
-        /* -------------------------------------------------------------------------
-           YOUTUBE API
-        ------------------------------------------------------------------------- */
+        /* YOUTUBE API */
         (function(){
             const YT_API_KEY = "AIzaSyBrsJ_dZwxk7gdilQ8nAbnSgT3BT07FMrI";
             const YT_HANDLE = "@IBGOFICIAL";
@@ -1132,10 +1094,6 @@
                 try {
                     return new Date(iso).toLocaleDateString("pt-BR", { day:"2-digit", month:"2-digit", year:"numeric" });
                 } catch(e) { return ""; }
-            }
-
-            function esc(s){
-                return String(s || "").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;");
             }
 
             async function ytFetchJson(url){
@@ -1175,7 +1133,7 @@
                     var title = esc(video.title);
                     var thumbHtml = video.thumb ? '<img class="yt-thumb" src="' + esc(video.thumb) + '" alt="' + title + '" loading="lazy">' : '';
 
-                    return '<a class="yt-card" href="' + href + '" target="_blank" rel="noopener" aria-label="Abrir vídeo: ' + title + '">' +
+                    return '<a class="yt-card" href="' + href + '" target="_top" rel="noopener" aria-label="Abrir vídeo: ' + title + '">' +
                             thumbHtml +
                             '<div class="yt-play" aria-hidden="true"><span>▶</span></div>' +
                             '<div class="yt-meta">' +
