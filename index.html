@@ -269,7 +269,7 @@
     </main>
 
     <script>
-        const VERSAO_SISTEMA = "Versão.202609052248";
+        const VERSAO_SISTEMA = "Versão.202609052257";
 
         function tratarUrl(url) {
             if (!url) return "#";
@@ -282,35 +282,25 @@
         }
 
         // FUNÇÃO DE NAVEGAÇÃO CORRETA PARA IOS WEBVIEW
-        function abrirLink(url, evt) {
+         function abrirLink(url, evt) {
     if (evt) {
         evt.preventDefault();
-        evt.stopPropagation();
     }
     
     const linkFinal = tratarUrl(url);
     if (!linkFinal || linkFinal === "https://#") return;
 
-    // Se estiver no iOS/WebView do App, força abrir fora
-    try {
-        // Tenta abrir no navegador do sistema (Safari)
-        if (window.webkit && window.webkit.messageHandlers) {
-            window.open(linkFinal, '_system');
-        } else {
-            // Alternativa padrão para quebrar o iFrame
-            const a = document.createElement('a');
-            a.href = linkFinal;
-            a.target = '_blank';
-            a.rel = 'noopener noreferrer';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-        }
-    } catch (e) {
-        window.location.href = linkFinal;
-    }
+    // Força a navegação no Safari através de criação direta de elemento a
+    const a = document.createElement('a');
+    a.href = linkFinal;
+    a.target = '_blank';
+    a.rel = 'noopener';
+    
+    // Dispara o clique nativo
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
 }
-
 
         /* SLIDER API */
         (function(){
