@@ -193,7 +193,7 @@
             <section class="yt-section">
                 <div class="yt-wrap">
                     <div class="yt-header">
-                        <a class="yt-channel-btn" onclick="redirecionarLink('https://www.youtube.com/@IBGOFICIAL', event)">▶ Ver canal no YouTube</a>
+                        <a id="btn-yt-channel" class="yt-channel-btn">▶ Ver canal no YouTube</a>
                     </div>
                     <div class="yt-rail">
                         <button class="yt-nav yt-prev" type="button">‹</button>
@@ -258,8 +258,8 @@
             <section class="horarios-section">
                 <div class="glass-card">
                     <div class="schedule-wrapper">
-                        <a onclick="redirecionarLink('https://sites.google.com/view/dashibg/pgs-e-microgrupos', event)" class="pill-button">👥 PGs e Microgrupos</a>
-                        <a onclick="redirecionarLink('https://sites.google.com/view/dashibg/in%C3%ADcio', event)" class="pill-button">🎯 Ministérios</a>
+                        <a id="link-pgs" class="pill-button">👥 PGs e Microgrupos</a>
+                        <a id="link-ministerios" class="pill-button">🎯 Ministérios</a>
                     </div>
                 </div>
             </section>
@@ -269,7 +269,10 @@
     </main>
 
     <script>
-        const VERSAO_SISTEMA = "Versão.202609062315";
+        const VERSAO_SISTEMA = "Versão.202609062326";
+
+        // Detecção explícita de plataforma
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 
         function tratarUrl(url) {
             if (!url) return "#";
@@ -281,30 +284,25 @@
             return String(val || "").replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#039;");
         }
 
-        // REDIRECIONAMENTO UNIVERSAL (ANDROID + IOS)
-        function redirecionarLink(url, evt) {
-            if (evt) {
-                evt.preventDefault();
-                evt.stopPropagation();
-            }
-            const linkFinal = tratarUrl(url);
-            if (!linkFinal || linkFinal === "https://#") return;
-
-            // Detecta iOS (iPhone/iPad)
-            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-
+        // Função que configura a tag <a> para ter a propriedade correta segundo o SO
+        function aplicarAtributosLink(elementoA, url) {
+            const urlFinal = tratarUrl(url);
+            elementoA.href = urlFinal;
+            
             if (isIOS) {
-                // Tenta abrir em nova aba no Safari do iOS
-                window.open(linkFinal, '_blank');
+                // No iOS abre em nova janela/aba externa
+                elementoA.target = "_blank";
+                elementoA.rel = "noopener noreferrer";
             } else {
-                // No Android / WebView, direciona a janela principal do app
-                try {
-                    window.top.location.href = linkFinal;
-                } catch (e) {
-                    window.location.href = linkFinal;
-                }
+                // No Android redireciona a janela principal do app
+                elementoA.target = "_top";
             }
         }
+
+        // Configuração dos links estáticos
+        aplicarAtributosLink(document.getElementById("btn-yt-channel"), "https://www.youtube.com/@IBGOFICIAL");
+        aplicarAtributosLink(document.getElementById("link-pgs"), "https://sites.google.com/view/dashibg/pgs-e-microgrupos");
+        aplicarAtributosLink(document.getElementById("link-ministerios"), "https://sites.google.com/view/dashibg/in%C3%ADcio");
 
         /* SLIDER API */
         (function(){
@@ -328,11 +326,19 @@
                         return;
                     }
 
-                    slidesWrap.innerHTML = slides.map((slide, index) => `
-                        <div class="hero-slide ${index === 0 ? "is-active" : ""}" onclick="redirecionarLink('${esc(slide.link)}', event)" role="button">
-                            <img src="${esc(String(slide["url da imagem"]).trim())}" alt="${esc(slide.nome || "Destaque")}">
-                        </div>
-                    `).join("");
+                    slidesWrap.innerHTML = "";
+                    slides.forEach((slide, index) => {
+                        const a = document.createElement("a");
+                        a.className = `hero-slide ${index === 0 ? "is-active" : ""}`;
+                        aplicarAtributosLink(a, slide.link);
+                        
+                        const img = document.createElement("img");
+                        img.src = esc(String(slide["url da imagem"]).trim());
+                        img.alt = esc(slide.nome || "Destaque");
+                        
+                        a.appendChild(img);
+                        slidesWrap.appendChild(a);
+                    });
 
                     dotsWrap.innerHTML = slides.map((_, index) => `
                         <button class="hero-dot ${index === 0 ? "is-active" : ""}" type="button"></button>
@@ -384,7 +390,9 @@
                         container.innerHTML = `<div class="eks-events-empty">Nenhum evento disponível no momento.</div>`;
                         return;
                     }
-                    container.innerHTML = eventosSite.map(evento => {
+
+                    container.innerHTML = "";
+                    eventosSite.forEach(evento => {
                         const data = formatarData(evento.data);
                         const hora = String(evento.hora || "").trim();
                         const nome = String(evento.nome || "").trim();
@@ -392,20 +400,26 @@
                         const botao = String(evento["botão"] || evento.botao || "").trim().toUpperCase();
                         const mostrarBotao = (botao === "SIM" && linkRaw !== "");
 
-                        return `
-                        <article class="eks-event">
+                        const article = document.createElement("article");
+                        article.className = "eks-event";
+
+                        let btnHtml = "";
+                        if(mostrarBotao) {
+                            const targetVal = isIOS ? '_blank' : '_top';
+                            btnHtml = `<a class="eks-event-button" href="${esc(tratarUrl(linkRaw))}" target="${targetVal}" rel="noopener">Inscreva-se</a>`;
+                        }
+
+                        article.innerHTML = `
                             <div class="eks-event-info">
                                 <div class="eks-event-date">
                                     <div class="eks-event-date-line"><span class="eks-event-icon">📅</span><strong>${esc(data)}</strong></div>
                                     <div class="eks-event-date-line"><span class="eks-event-icon">⏰</span><span>${esc(hora)}</span></div>
                                 </div>
                                 <div class="eks-event-divider"></div>
-                                <div class="eks-event-name">${esc(nome)}<br>
-                                    ${mostrarBotao ? `<a class="eks-event-button" onclick="redirecionarLink('${esc(linkRaw)}', event)">Inscreva-se</a>` : ""}
-                                </div>
-                            </div>
-                        </article>`;
-                    }).join("");
+                                <div class="eks-event-name">${esc(nome)}<br>${btnHtml}</div>
+                            </div>`;
+                        container.appendChild(article);
+                    });
                 })
                 .catch(err => { container.innerHTML = `<div class="eks-events-error">Não foi possível carregar os próximos eventos.</div>`; });
         })();
@@ -425,7 +439,7 @@
                         .forEach(link => {
                             const a = document.createElement("a");
                             a.className = "pill-button";
-                            a.onclick = function(e){ redirecionarLink(link.url, e); };
+                            aplicarAtributosLink(a, link.url);
                             a.appendChild(document.createTextNode(`${link.icone || ""} ${link.nome || ""}`));
 
                             if(link.nome2 && String(link.nome2).trim() !== ""){
@@ -472,18 +486,22 @@
                         return;
                     }
 
-                    sliderEl.innerHTML = videos.map(video => {
+                    sliderEl.innerHTML = "";
+                    videos.forEach(video => {
                         const href = "https://www.youtube.com/watch?v=" + encodeURIComponent(video.id);
-                        return `
-                        <div class="yt-card" onclick="redirecionarLink('${href}', event)">
+                        const a = document.createElement("a");
+                        a.className = "yt-card";
+                        aplicarAtributosLink(a, href);
+
+                        a.innerHTML = `
                             ${video.thumb ? `<img class="yt-thumb" src="${esc(video.thumb)}" alt="${esc(video.title)}">` : ''}
                             <div class="yt-play"><span>▶</span></div>
                             <div class="yt-meta">
                                 <p class="yt-name">${esc(video.title)}</p>
                                 <p class="yt-date">${esc(fmtDateBR(video.date))}</p>
-                            </div>
-                        </div>`;
-                    }).join("");
+                            </div>`;
+                        sliderEl.appendChild(a);
+                    });
 
                     statusEl.textContent = "Atualizado automaticamente.";
                 })
