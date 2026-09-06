@@ -915,7 +915,7 @@
     </main>
 
     <script>
-        const VERSAO_SISTEMA = "Versão.202609052213";
+        const VERSAO_SISTEMA = "Versão.202609052230";
 
         // Função utilitária para tratar URLs
         function tratarUrl(url) {
@@ -1169,6 +1169,24 @@
                 });
             }
         })();
+
+        // função abrirLink por esta:
+function abrirLink(url, evt) {
+    if (evt) evt.preventDefault();
+    const linkFinal = tratarUrl(url);
+    
+    if (linkFinal && linkFinal !== "https://#") {
+        // Tenta abrir direto no navegador principal/external target
+        var targetLink = document.createElement('a');
+        targetLink.href = linkFinal;
+        targetLink.target = '_top'; // Força abrir no nível superior da tela do app
+        targetLink.rel = 'noopener noreferrer';
+        
+        document.body.appendChild(targetLink);
+        targetLink.click();
+        document.body.removeChild(targetLink);
+    }
+}
 
         document.getElementById("exibir-versao").innerText = VERSAO_SISTEMA; 
     </script>
