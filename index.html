@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IBG - Igreja Batista Graça - Versão.202609081549</title>
+    <title>IBG - Igreja Batista Graça - Versão.202609081557</title>
     
     <style>
         * {
@@ -446,43 +446,199 @@ function aplicarAtributosLink(elementoA, url) {
                 .catch(err => console.error(err));
         })();
 
-        /* YOUTUBE API */
- /* YOUTUBE TESTE */
+ /* YOUTUBE */
 
 const YT_SCRIPT_URL =
   "https://script.google.com/macros/s/AKfycbx9nU8MloK3xiU70WPSv7x3U92_4Q92FC_Uw0ugvwynPJeiEd06tfu5Y54PCMwtdcmI/exec";
 
-async function testarYouTube() {
+const YT_CHANNEL_URL = "https://www.youtube.com/@IBGOFICIAL";
+const MAX_VIDEOS = 10;
 
-  console.log("1. Iniciando teste do YouTube");
+const ytSlider = document.getElementById("ytSlider");
+const ytStatus = document.getElementById("ytStatus");
+const btnYtChannel = document.getElementById("btn-yt-channel");
+const ytPrev = document.querySelector(".yt-prev");
+const ytNext = document.querySelector(".yt-next");
+
+
+/* BOTÃO DO CANAL */
+
+if (btnYtChannel) {
+  btnYtChannel.addEventListener("click", () => {
+    window.top.location.href = YT_CHANNEL_URL;
+  });
+}
+
+
+/* CARREGAR VÍDEOS */
+
+async function carregarVideosYouTube() {
 
   try {
 
-    const url = `${YT_SCRIPT_URL}?tipo=youtube`;
+    if (ytStatus) {
+      ytStatus.textContent = "Carregando vídeos...";
+    }
 
-    console.log("2. URL:", url);
+    const resposta = await fetch(`${YT_SCRIPT_URL}?tipo=youtube`);
 
-    const resposta = await fetch(url);
+    if (!resposta.ok) {
+      throw new Error(`Erro HTTP ${resposta.status}`);
+    }
 
-    console.log("3. Status:", resposta.status);
-    console.log("4. OK:", resposta.ok);
+    const videos = await resposta.json();
 
-    const texto = await resposta.text();
+    if (!Array.isArray(videos)) {
+      throw new Error(
+        videos.erro || "Resposta inválida do servidor"
+      );
+    }
 
-    console.log("5. Resposta:", texto);
+    if (videos.length === 0) {
 
-    const videos = JSON.parse(texto);
+      if (ytStatus) {
+        ytStatus.textContent = "Nenhum vídeo encontrado.";
+      }
 
-    console.log("6. Vídeos:", videos);
+      return;
+    }
+
+
+    /* LIMPA O SLIDER */
+
+    if (ytSlider) {
+      ytSlider.innerHTML = "";
+    }
+
+
+    /* CRIA OS CARDS */
+
+    videos.slice(0, MAX_VIDEOS).forEach(video => {
+
+      const videoId = video.id;
+
+      if (!videoId) return;
+
+
+      const card = document.createElement("div");
+
+      card.className = "yt-card";
+
+
+      const data = new Date(video.date);
+
+      const dataFormatada =
+        !isNaN(data.getTime())
+          ? data.toLocaleDateString("pt-BR", {
+              day: "2-digit",
+              month: "2-digit",
+              year: "numeric"
+            })
+          : "";
+
+
+      card.innerHTML = `
+        <img
+          class="yt-thumb"
+          src="${video.thumb}"
+          alt="${video.title || "Mensagem"}"
+          loading="lazy"
+        >
+
+        <div class="yt-play">
+          <span>▶</span>
+        </div>
+
+        <div class="yt-meta">
+
+          <h3 class="yt-name">
+            ${video.title || "Mensagem"}
+          </h3>
+
+          ${
+            dataFormatada
+              ? `<p class="yt-date">${dataFormatada}</p>`
+              : ""
+          }
+
+        </div>
+      `;
+
+
+      /* AO CLICAR, ABRE O YOUTUBE */
+
+      card.addEventListener("click", () => {
+
+        window.top.location.href =
+          `https://www.youtube.com/watch?v=${videoId}`;
+
+      });
+
+
+      if (ytSlider) {
+        ytSlider.appendChild(card);
+      }
+
+    });
+
+
+    /* REMOVE MENSAGEM DE CARREGAMENTO */
+
+    if (ytStatus) {
+      ytStatus.textContent = "";
+    }
+
 
   } catch (erro) {
 
-    console.error("7. ERRO YOUTUBE:", erro);
+    console.error(
+      "Erro ao carregar vídeos do YouTube:",
+      erro
+    );
+
+    if (ytStatus) {
+      ytStatus.textContent =
+        "Não foi possível carregar as mensagens.";
+    }
 
   }
+
 }
 
-testarYouTube();
+
+/* BOTÕES DE NAVEGAÇÃO */
+
+if (ytPrev && ytSlider) {
+
+  ytPrev.addEventListener("click", () => {
+
+    ytSlider.scrollBy({
+      left: -300,
+      behavior: "smooth"
+    });
+
+  });
+
+}
+
+
+if (ytNext && ytSlider) {
+
+  ytNext.addEventListener("click", () => {
+
+    ytSlider.scrollBy({
+      left: 300,
+      behavior: "smooth"
+    });
+
+  });
+
+}
+
+
+/* INICIA */
+
+carregarVideosYouTube();
 
     </script>
 </body>
