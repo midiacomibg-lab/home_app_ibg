@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IBG - Igreja Batista Graça - Versão.202609081816</title>
+    <title>IBG - Igreja Batista Graça - Versão.202609081822</title>
     
     <style>
         * {
@@ -253,28 +253,14 @@
         </section>
 
         <!-- LIDERANÇA -->
-         <section>
+        <section>
     <div class="section-divider section-divider--title">
         <h2 class="band-title">Liderança</h2>
     </div>
 
     <section class="horarios-section">
         <div class="glass-card">
-            <div class="schedule-wrapper">
-
-                <a
-                    class="pill-button"
-                    href="https://www.google.com">
-                    👥 PGs e Microgrupos
-                </a>
-
-                <a
-                    class="pill-button"
-                    href="https://sites.google.com/view/dashibg/in%C3%ADcio">
-                    🎯 Ministérios
-                </a>
-
-            </div>
+            <div class="schedule-wrapper" id="lideranca-links"></div>
         </div>
     </section>
 </section>
@@ -460,6 +446,37 @@ function aplicarAtributosLink(elementoA, url) {
                 .catch(err => console.error(err));
         })();
 
+/* BOTÕES LIDERANÇA */
+
+(function(){
+    const container = document.getElementById("lideranca-links");
+    if(!container) return;
+
+    const botoes = [
+        {
+            nome: "👥 PGs e Microgrupos",
+            url: "https://sites.google.com/view/dashibg/pgs-e-microgrupos"
+        },
+        {
+            nome: "🎯 Ministérios",
+            url: "https://sites.google.com/view/dashibg/in%C3%ADcio"
+        }
+    ];
+
+    botoes.forEach(botao => {
+        const a = document.createElement("a");
+
+        a.className = "pill-button";
+
+        aplicarAtributosLink(a, botao.url);
+
+        a.appendChild(document.createTextNode(botao.nome));
+
+        container.appendChild(a);
+    });
+})();
+
+        
  /* YOUTUBE */
 
 const YT_SCRIPT_URL =
