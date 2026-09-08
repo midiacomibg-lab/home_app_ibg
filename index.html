@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IBG - Igreja Batista Graça</title>
+    <title>IBG - Igreja Batista Graça - Versão.202609081423</title>
     
     <style>
         * {
@@ -265,16 +265,14 @@
             </section>
         </section>
 
-        <a href="https://www.youtube.com/watch?v=pNqiTuwr4Ls" target="_top">
-    TESTE YOUTUBE 2
-</a>
 
-        <div id="exibir-versao" style="font-size: 6px; color: gray; padding: 10px;"></div>
+        <div id="titulo-pagina" style="font-size: 6px; color: gray; padding: 10px;"></div>
     </main>
 
     <script>
-        const VERSAO_SISTEMA = "Versão.202609081404";
- 
+        // Pega o conteúdo da tag <title> e coloca no elemento com id="titulo-pagina"
+        document.getElementById('titulo-pagina').textContent = document.title;
+  
 
         function tratarUrl(url) {
             if (!url) return "#";
@@ -287,9 +285,15 @@
         }
 
         // Função que configura a tag <a> para ter a propriedade correta segundo o SO
-        function aplicarAtributosLink(elementoA, url) {
+function aplicarAtributosLink(elementoA, url) {
     const urlFinal = tratarUrl(url);
     elementoA.href = urlFinal;
+
+    // Links do YouTube precisam sair do iframe
+    if (/youtube\.com|youtu\.be/i.test(urlFinal)) {
+        elementoA.target = "_top";
+        elementoA.rel = "noopener noreferrer";
+    }
 }
 
         // Configuração dos links estáticos
