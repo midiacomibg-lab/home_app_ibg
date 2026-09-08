@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IBG - Igreja Batista Graça - Versão.202609081455</title>
+    <title>IBG - Igreja Batista Graça - Versão.202609081518</title>
     
     <style>
         * {
@@ -447,147 +447,191 @@ function aplicarAtributosLink(elementoA, url) {
         })();
 
         /* YOUTUBE API */
-(function(){
-    const YT_API_KEY = "AIzaSyBrsJ_dZwxk7gdilQ8nAbnSgT3BT07FMrI";
-    const YT_HANDLE = "@IBGOFICIAL";
-    const MAX_VIDEOS = 10;
+ (function(){
+
+    const API_YOUTUBE =
+        "https://script.google.com/macros/s/AKfycbwvCWOVrZPGuqsvMitk-j01QwGVhW6sgv_ELXzCAv5oXgSGT9Rcud_jLSbCdroYvZjd/exec?tipo=youtube";
 
     const sliderEl = document.getElementById("ytSlider");
     const statusEl = document.getElementById("ytStatus");
 
     if(!sliderEl || !statusEl) return;
 
+
     function fmtDateBR(iso){
+
         try {
+
             return new Date(iso).toLocaleDateString("pt-BR", {
                 day: "2-digit",
                 month: "2-digit",
                 year: "numeric"
             });
+
         } catch(e) {
+
             return "";
+
         }
+
     }
 
-    async function buscarJSON(url) {
-        const res = await fetch(url);
-        const data = await res.json();
 
-        if (!res.ok) {
-            console.error("Erro da API do YouTube:", res.status, data);
-            throw new Error(
-                data?.error?.message ||
-                `Erro HTTP ${res.status}`
-            );
-        }
+    fetch(API_YOUTUBE)
 
-        return data;
-    }
+        .then(res => {
 
-    buscarJSON(
-        `https://www.googleapis.com/youtube/v3/channels?part=id&forHandle=${encodeURIComponent(YT_HANDLE)}&key=${encodeURIComponent(YT_API_KEY)}`
-    )
-    .then(data => {
+            if(!res.ok){
+                throw new Error("HTTP " + res.status);
+            }
 
-        console.log("Resposta channels.list:", data);
+            return res.json();
 
-        if(!data.items?.length) {
-            throw new Error("Canal não encontrado para o handle " + YT_HANDLE);
-        }
+        })
 
-        return data.items[0].id;
-    })
-    .then(channelId => {
+        .then(videos => {
 
-        console.log("ID do canal encontrado:", channelId);
+            console.log("Vídeos recebidos do Apps Script:", videos);
 
-        return buscarJSON(
-            `https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${encodeURIComponent(channelId)}&order=date&type=video&maxResults=${MAX_VIDEOS}&key=${encodeURIComponent(YT_API_KEY)}`
-        );
-    })
-    .then(data => {
 
-        console.log("Resposta search.list:", data);
+            if(videos && videos.erro){
 
-        const videos = (data.items || [])
-            .map(item => ({
-                id: item.id?.videoId || "",
-                title: item.snippet?.title || "Vídeo",
-                date: item.snippet?.publishedAt || "",
-                thumb: item.snippet?.thumbnails?.high?.url || ""
-            }))
-            .filter(v => v.id);
+                throw new Error(
+                    videos.mensagem ||
+                    videos.erro
+                );
 
-        if(!videos.length) {
-            statusEl.textContent = "Nenhum vídeo encontrado.";
-            return;
-        }
+            }
 
-        sliderEl.innerHTML = "";
 
-        videos.forEach(video => {
+            if(!videos || !videos.length){
 
-            const href =
-                "https://www.youtube.com/watch?v=" +
-                encodeURIComponent(video.id);
+                statusEl.textContent =
+                    "Nenhum vídeo encontrado.";
 
-            const a = document.createElement("a");
+                return;
 
-            a.className = "yt-card";
+            }
 
-            // YouTube precisa sair do iframe
-            aplicarAtributosLink(a, href);
 
-            a.innerHTML = `
-                ${
-                    video.thumb
-                    ? `<img class="yt-thumb"
+            sliderEl.innerHTML = "";
+
+
+            videos.forEach(video => {
+
+                const href =
+                    "https://www.youtube.com/watch?v=" +
+                    encodeURIComponent(video.id);
+
+
+                const a =
+                    document.createElement("a");
+
+
+                a.className = "yt-card";
+
+
+                // Faz o YouTube sair do iframe
+                aplicarAtributosLink(a, href);
+
+
+                a.innerHTML = `
+
+                    ${
+                        video.thumb
+                        ?
+                        `<img
+                            class="yt-thumb"
                             src="${esc(video.thumb)}"
-                            alt="${esc(video.title)}">`
-                    : ''
-                }
+                            alt="${esc(video.title)}"
+                            loading="lazy"
+                        >`
+                        :
+                        ''
+                    }
 
-                <div class="yt-play">
-                    <span>▶</span>
-                </div>
+                    <div class="yt-play">
+                        <span>▶</span>
+                    </div>
 
-                <div class="yt-meta">
-                    <p class="yt-name">${esc(video.title)}</p>
-                    <p class="yt-date">${esc(fmtDateBR(video.date))}</p>
-                </div>
-            `;
+                    <div class="yt-meta">
 
-            sliderEl.appendChild(a);
+                        <p class="yt-name">
+                            ${esc(video.title)}
+                        </p>
+
+                        <p class="yt-date">
+                            ${esc(fmtDateBR(video.date))}
+                        </p>
+
+                    </div>
+
+                `;
+
+
+                sliderEl.appendChild(a);
+
+            });
+
+
+            statusEl.textContent =
+                "Atualizado automaticamente.";
+
+        })
+
+        .catch(err => {
+
+            console.error(
+                "ERRO FINAL YOUTUBE:",
+                err
+            );
+
+
+            statusEl.textContent =
+                "Erro ao carregar YouTube: " +
+                (err.message || err);
+
         });
 
-        statusEl.textContent = "Atualizado automaticamente.";
-    })
-    .catch(err => {
 
-        console.error("ERRO FINAL YOUTUBE:", err);
+    // =========================
+    // BOTÕES DO SLIDER
+    // =========================
 
-        statusEl.textContent =
-            "Erro ao carregar YouTube: " +
-            (err.message || err);
-    });
+    const prevBtn =
+        document.querySelector(".yt-prev");
 
-    const prevBtn = document.querySelector(".yt-prev");
-    const nextBtn = document.querySelector(".yt-next");
+    const nextBtn =
+        document.querySelector(".yt-next");
+
 
     if(prevBtn && nextBtn && sliderEl){
-        prevBtn.addEventListener("click", () =>
-            sliderEl.scrollBy({
-                left: -260,
-                behavior: "smooth"
-            })
+
+        prevBtn.addEventListener(
+            "click",
+            () => {
+
+                sliderEl.scrollBy({
+                    left: -260,
+                    behavior: "smooth"
+                });
+
+            }
         );
 
-        nextBtn.addEventListener("click", () =>
-            sliderEl.scrollBy({
-                left: 260,
-                behavior: "smooth"
-            })
+
+        nextBtn.addEventListener(
+            "click",
+            () => {
+
+                sliderEl.scrollBy({
+                    left: 260,
+                    behavior: "smooth"
+                });
+
+            }
         );
+
     }
 
 })();
