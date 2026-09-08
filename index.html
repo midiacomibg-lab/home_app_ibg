@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IBG - Igreja Batista Graça - Versão.202609081423</title>
+    <title>IBG - Igreja Batista Graça - Versão.202609081436</title>
     
     <style>
         * {
@@ -289,8 +289,10 @@ function aplicarAtributosLink(elementoA, url) {
     const urlFinal = tratarUrl(url);
     elementoA.href = urlFinal;
 
-    // Links do YouTube precisam sair do iframe
-    if (/youtube\.com|youtu\.be/i.test(urlFinal)) {
+    if (
+        /youtube\.com|youtu\.be/i.test(urlFinal) ||
+        /sites\.google\.com/i.test(urlFinal)
+    ) {
         elementoA.target = "_top";
         elementoA.rel = "noopener noreferrer";
     }
@@ -501,8 +503,10 @@ function aplicarAtributosLink(elementoA, url) {
 
                     statusEl.textContent = "Atualizado automaticamente.";
                 })
-                .catch(err => { statusEl.textContent = "Não foi possível carregar os vídeos do YouTube."; });
-
+.catch(err => { 
+    console.error("Erro YouTube:", err);
+    statusEl.textContent = "Erro ao carregar vídeos: " + (err.message || err);
+});
             const prevBtn = document.querySelector(".yt-prev");
             const nextBtn = document.querySelector(".yt-next");
             if(prevBtn && nextBtn && sliderEl){
