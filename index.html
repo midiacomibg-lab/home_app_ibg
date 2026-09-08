@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IBG - Igreja Batista Graça - Versão.202609081533</title>
+    <title>IBG - Igreja Batista Graça - Versão.202609081540</title>
     
     <style>
         * {
@@ -447,167 +447,43 @@ function aplicarAtributosLink(elementoA, url) {
         })();
 
         /* YOUTUBE API */
- /* YOUTUBE */
+ /* YOUTUBE TESTE */
 
 const YT_SCRIPT_URL =
   "https://script.google.com/macros/s/AKfycbwvCWOVrZPGuqsvMitk-j01QwGVhW6sgv_ELXzCAv5oXgSGT9Rcud_jLSbCdroYvZjd/exec";
 
-const YT_CHANNEL_URL = "https://www.youtube.com/@IBGOFICIAL";
+async function testarYouTube() {
 
-const MAX_VIDEOS = 10;
-
-const ytSlider = document.getElementById("ytSlider");
-const ytStatus = document.getElementById("ytStatus");
-const btnYtChannel = document.getElementById("btn-yt-channel");
-
-
-/* BOTÃO DO CANAL */
-
-if (btnYtChannel) {
-  btnYtChannel.addEventListener("click", () => {
-    window.top.location.href = YT_CHANNEL_URL;
-  });
-}
-
-
-/* CARREGAR VÍDEOS */
-
-async function carregarVideosYouTube() {
+  console.log("1. Iniciando teste do YouTube");
 
   try {
 
-    if (ytStatus) {
-      ytStatus.textContent = "Carregando mensagens...";
-    }
+    const url = `${YT_SCRIPT_URL}?tipo=youtube`;
 
-    const resposta = await fetch(
-      `${YT_SCRIPT_URL}?tipo=youtube`
-    );
+    console.log("2. URL:", url);
 
-    if (!resposta.ok) {
-      throw new Error(
-        `Erro HTTP ${resposta.status}`
-      );
-    }
+    const resposta = await fetch(url);
 
-    const videos = await resposta.json();
+    console.log("3. Status:", resposta.status);
+    console.log("4. OK:", resposta.ok);
 
-    if (!Array.isArray(videos)) {
-      throw new Error(
-        videos.erro || "Resposta inválida do servidor"
-      );
-    }
+    const texto = await resposta.text();
 
-    if (videos.length === 0) {
+    console.log("5. Resposta:", texto);
 
-      if (ytStatus) {
-        ytStatus.textContent =
-          "Nenhuma mensagem encontrada.";
-      }
+    const videos = JSON.parse(texto);
 
-      return;
-    }
-
-
-    /* LIMPA O SLIDER */
-
-    if (ytSlider) {
-      ytSlider.innerHTML = "";
-    }
-
-
-    /* CRIA OS CARDS */
-
-    videos
-      .slice(0, MAX_VIDEOS)
-      .forEach(video => {
-
-        const videoId = video.id;
-
-        if (!videoId) {
-          return;
-        }
-
-        const card = document.createElement("div");
-
-        card.className = "yt-card";
-
-        const data = new Date(video.date);
-
-        const dataFormatada =
-          !isNaN(data.getTime())
-            ? data.toLocaleDateString("pt-BR", {
-                day: "2-digit",
-                month: "2-digit",
-                year: "numeric"
-              })
-            : "";
-
-
-        card.innerHTML = `
-          <img
-            src="${video.thumb}"
-            alt="${video.title || "Mensagem"}"
-            loading="lazy"
-          >
-
-          <div class="yt-card-content">
-
-            <h3>
-              ${video.title || "Mensagem"}
-            </h3>
-
-            ${
-              dataFormatada
-                ? `<p>${dataFormatada}</p>`
-                : ""
-            }
-
-          </div>
-        `;
-
-
-        /* CLIQUE NO CARD */
-
-        card.addEventListener("click", () => {
-
-          window.top.location.href =
-            `https://www.youtube.com/watch?v=${videoId}`;
-
-        });
-
-
-        if (ytSlider) {
-          ytSlider.appendChild(card);
-        }
-
-      });
-
-
-    if (ytStatus) {
-      ytStatus.textContent = "";
-    }
+    console.log("6. Vídeos:", videos);
 
   } catch (erro) {
 
-    console.error(
-      "Erro ao carregar vídeos do YouTube:",
-      erro
-    );
+    console.error("7. ERRO YOUTUBE:", erro);
 
-    if (ytStatus) {
-      ytStatus.textContent =
-        "Não foi possível carregar as mensagens.";
-    }
   }
 }
 
+testarYouTube();
 
-/* INICIA */
-
-carregarVideosYouTube();
-
-        document.getElementById("exibir-versao").innerText = VERSAO_SISTEMA;
     </script>
 </body>
 </html>
