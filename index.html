@@ -269,10 +269,8 @@
     </main>
 
     <script>
-        const VERSAO_SISTEMA = "Versão.202609062326";
-
-        // Detecção explícita de plataforma
-        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+        const VERSAO_SISTEMA = "Versão.202609081344";
+ 
 
         function tratarUrl(url) {
             if (!url) return "#";
@@ -286,18 +284,9 @@
 
         // Função que configura a tag <a> para ter a propriedade correta segundo o SO
         function aplicarAtributosLink(elementoA, url) {
-            const urlFinal = tratarUrl(url);
-            elementoA.href = urlFinal;
-            
-            if (isIOS) {
-                // No iOS abre em nova janela/aba externa
-                elementoA.target = "_blank";
-                elementoA.rel = "noopener noreferrer";
-            } else {
-                // No Android redireciona a janela principal do app
-                elementoA.target = "_top";
-            }
-        }
+    const urlFinal = tratarUrl(url);
+    elementoA.href = urlFinal;
+}
 
         // Configuração dos links estáticos
         aplicarAtributosLink(document.getElementById("btn-yt-channel"), "https://www.youtube.com/@IBGOFICIAL");
@@ -405,8 +394,7 @@
 
                         let btnHtml = "";
                         if(mostrarBotao) {
-                            const targetVal = isIOS ? '_blank' : '_top';
-                            btnHtml = `<a class="eks-event-button" href="${esc(tratarUrl(linkRaw))}" target="${targetVal}" rel="noopener">Inscreva-se</a>`;
+                            btnHtml = `<a class="eks-event-button" href="${esc(tratarUrl(linkRaw))}">Inscreva-se</a>`;
                         }
 
                         article.innerHTML = `
