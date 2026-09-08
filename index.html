@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IBG - Igreja Batista Graça - Versão.202609081518</title>
+    <title>IBG - Igreja Batista Graça - Versão.202609081533</title>
     
     <style>
         * {
@@ -447,194 +447,165 @@ function aplicarAtributosLink(elementoA, url) {
         })();
 
         /* YOUTUBE API */
- (function(){
+ /* YOUTUBE */
 
-    const API_YOUTUBE =
-        "https://script.google.com/macros/s/AKfycbwvCWOVrZPGuqsvMitk-j01QwGVhW6sgv_ELXzCAv5oXgSGT9Rcud_jLSbCdroYvZjd/exec?tipo=youtube";
+const YT_SCRIPT_URL =
+  "https://script.google.com/macros/s/AKfycbwvCWOVrZPGuqsvMitk-j01QwGVhW6sgv_ELXzCAv5oXgSGT9Rcud_jLSbCdroYvZjd/exec";
 
-    const sliderEl = document.getElementById("ytSlider");
-    const statusEl = document.getElementById("ytStatus");
+const YT_CHANNEL_URL = "https://www.youtube.com/@IBGOFICIAL";
 
-    if(!sliderEl || !statusEl) return;
+const MAX_VIDEOS = 10;
+
+const ytSlider = document.getElementById("ytSlider");
+const ytStatus = document.getElementById("ytStatus");
+const btnYtChannel = document.getElementById("btn-yt-channel");
 
 
-    function fmtDateBR(iso){
+/* BOTÃO DO CANAL */
 
-        try {
+if (btnYtChannel) {
+  btnYtChannel.addEventListener("click", () => {
+    window.top.location.href = YT_CHANNEL_URL;
+  });
+}
 
-            return new Date(iso).toLocaleDateString("pt-BR", {
-                day: "2-digit",
-                month: "2-digit",
-                year: "numeric"
-            });
 
-        } catch(e) {
+/* CARREGAR VÍDEOS */
 
-            return "";
+async function carregarVideosYouTube() {
 
-        }
+  try {
 
+    if (ytStatus) {
+      ytStatus.textContent = "Carregando mensagens...";
+    }
+
+    const resposta = await fetch(
+      `${YT_SCRIPT_URL}?tipo=youtube`
+    );
+
+    if (!resposta.ok) {
+      throw new Error(
+        `Erro HTTP ${resposta.status}`
+      );
+    }
+
+    const videos = await resposta.json();
+
+    if (!Array.isArray(videos)) {
+      throw new Error(
+        videos.erro || "Resposta inválida do servidor"
+      );
+    }
+
+    if (videos.length === 0) {
+
+      if (ytStatus) {
+        ytStatus.textContent =
+          "Nenhuma mensagem encontrada.";
+      }
+
+      return;
     }
 
 
-    fetch(API_YOUTUBE)
+    /* LIMPA O SLIDER */
 
-        .then(res => {
+    if (ytSlider) {
+      ytSlider.innerHTML = "";
+    }
 
-            if(!res.ok){
-                throw new Error("HTTP " + res.status);
+
+    /* CRIA OS CARDS */
+
+    videos
+      .slice(0, MAX_VIDEOS)
+      .forEach(video => {
+
+        const videoId = video.id;
+
+        if (!videoId) {
+          return;
+        }
+
+        const card = document.createElement("div");
+
+        card.className = "yt-card";
+
+        const data = new Date(video.date);
+
+        const dataFormatada =
+          !isNaN(data.getTime())
+            ? data.toLocaleDateString("pt-BR", {
+                day: "2-digit",
+                month: "2-digit",
+                year: "numeric"
+              })
+            : "";
+
+
+        card.innerHTML = `
+          <img
+            src="${video.thumb}"
+            alt="${video.title || "Mensagem"}"
+            loading="lazy"
+          >
+
+          <div class="yt-card-content">
+
+            <h3>
+              ${video.title || "Mensagem"}
+            </h3>
+
+            ${
+              dataFormatada
+                ? `<p>${dataFormatada}</p>`
+                : ""
             }
 
-            return res.json();
-
-        })
-
-        .then(videos => {
-
-            console.log("Vídeos recebidos do Apps Script:", videos);
+          </div>
+        `;
 
 
-            if(videos && videos.erro){
+        /* CLIQUE NO CARD */
 
-                throw new Error(
-                    videos.mensagem ||
-                    videos.erro
-                );
+        card.addEventListener("click", () => {
 
-            }
-
-
-            if(!videos || !videos.length){
-
-                statusEl.textContent =
-                    "Nenhum vídeo encontrado.";
-
-                return;
-
-            }
-
-
-            sliderEl.innerHTML = "";
-
-
-            videos.forEach(video => {
-
-                const href =
-                    "https://www.youtube.com/watch?v=" +
-                    encodeURIComponent(video.id);
-
-
-                const a =
-                    document.createElement("a");
-
-
-                a.className = "yt-card";
-
-
-                // Faz o YouTube sair do iframe
-                aplicarAtributosLink(a, href);
-
-
-                a.innerHTML = `
-
-                    ${
-                        video.thumb
-                        ?
-                        `<img
-                            class="yt-thumb"
-                            src="${esc(video.thumb)}"
-                            alt="${esc(video.title)}"
-                            loading="lazy"
-                        >`
-                        :
-                        ''
-                    }
-
-                    <div class="yt-play">
-                        <span>▶</span>
-                    </div>
-
-                    <div class="yt-meta">
-
-                        <p class="yt-name">
-                            ${esc(video.title)}
-                        </p>
-
-                        <p class="yt-date">
-                            ${esc(fmtDateBR(video.date))}
-                        </p>
-
-                    </div>
-
-                `;
-
-
-                sliderEl.appendChild(a);
-
-            });
-
-
-            statusEl.textContent =
-                "Atualizado automaticamente.";
-
-        })
-
-        .catch(err => {
-
-            console.error(
-                "ERRO FINAL YOUTUBE:",
-                err
-            );
-
-
-            statusEl.textContent =
-                "Erro ao carregar YouTube: " +
-                (err.message || err);
+          window.top.location.href =
+            `https://www.youtube.com/watch?v=${videoId}`;
 
         });
 
 
-    // =========================
-    // BOTÕES DO SLIDER
-    // =========================
+        if (ytSlider) {
+          ytSlider.appendChild(card);
+        }
 
-    const prevBtn =
-        document.querySelector(".yt-prev");
-
-    const nextBtn =
-        document.querySelector(".yt-next");
+      });
 
 
-    if(prevBtn && nextBtn && sliderEl){
-
-        prevBtn.addEventListener(
-            "click",
-            () => {
-
-                sliderEl.scrollBy({
-                    left: -260,
-                    behavior: "smooth"
-                });
-
-            }
-        );
-
-
-        nextBtn.addEventListener(
-            "click",
-            () => {
-
-                sliderEl.scrollBy({
-                    left: 260,
-                    behavior: "smooth"
-                });
-
-            }
-        );
-
+    if (ytStatus) {
+      ytStatus.textContent = "";
     }
 
-})();
+  } catch (erro) {
+
+    console.error(
+      "Erro ao carregar vídeos do YouTube:",
+      erro
+    );
+
+    if (ytStatus) {
+      ytStatus.textContent =
+        "Não foi possível carregar as mensagens.";
+    }
+  }
+}
+
+
+/* INICIA */
+
+carregarVideosYouTube();
 
         document.getElementById("exibir-versao").innerText = VERSAO_SISTEMA;
     </script>
