@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IBG - Igreja Batista Graça - Versão.202609081616</title>
+    <title>IBG - Igreja Batista Graça - Versão.202609081634</title>
     
     <style>
         * {
@@ -258,17 +258,19 @@
             <section class="horarios-section">
                 <div class="glass-card">
                     <div class="schedule-wrapper">
-                        <a
+<a
     href="https://sites.google.com/view/dashibg/pgs-e-microgrupos"
     class="pill-button"
-    target="_top">
+    target="_top"
+    onclick="abrirGoogleSite(event, 'https://sites.google.com/view/dashibg/pgs-e-microgrupos')">
     👥 PGs e Microgrupos
 </a>
 
 <a
     href="https://sites.google.com/view/dashibg/in%C3%ADcio"
     class="pill-button"
-    target="_top">
+    target="_top"
+    onclick="abrirGoogleSite(event, 'https://sites.google.com/view/dashibg/in%C3%ADcio')">
     🎯 Ministérios
 </a>
                     </div>
@@ -651,6 +653,11 @@ if (ytNext && ytSlider) {
 
 carregarVideosYouTube();
 
+        function abrirGoogleSite(event, url) {
+    event.preventDefault();
+
+    window.top.location.href = url;
+}
     </script>
 </body>
 </html>
