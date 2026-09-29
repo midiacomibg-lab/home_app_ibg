@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IBG - Dashboard Dinâmico</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Figtree -->
+    <link href="https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        ibg: {
+                            blue: '#0B1B3D',
+                            darkBlue: '#061026',
+                            brightBlue: '#1E60D5',
+                            cyan: '#00F0FF',
+                            orange: '#f97316',
+                            yellow: '#eab308',
+                            green: '#22c55e'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Figtree', 'sans-serif'],
+                        figtree: ['Figtree', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #061024;
+            font-family: 'Figtree', sans-serif;
+            overflow-x: hidden;
+            letter-spacing: 0.04em;
+        }
+
+        .circuit-bg {
+            background: radial-gradient(circle at 75% 30%, #154bb3 0%, #0a2561 45%, #050d21 85%);
+        }
+
+        .ibg-box {
+            background: rgba(14, 28, 64, 0.82);
+            backdrop-filter: blur(14px);
+            border: 2px solid #00f0ff;
+            box-shadow: 0 0 25px rgba(0, 240, 255, 0.25), inset 0 0 15px rgba(0, 240, 255, 0.1);
+            transition: transform 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
+        }
+
+        .animate-box-entry {
+            animation: boxSuspenseEntry 0.85s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes boxSuspenseEntry {
+            0% {
+                opacity: 0;
+                transform: translateY(28px) scale(0.94);
+                filter: blur(8px);
+                box-shadow: 0 0 0px rgba(0, 240, 255, 0);
+            }
+            50% {
+                opacity: 0.7;
+                filter: blur(2px);
+                box-shadow: 0 0 40px rgba(0, 240, 255, 0.5);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+                filter: blur(0px);
+                box-shadow: 0 0 25px rgba(0, 240, 255, 0.25);
+            }
+        }
+
+        .ibg-glow-text {
+            text-shadow: 0 0 14px rgba(0, 240, 255, 0.7);
+        }
+
+        .progress-ring__circle {
+            transition: stroke-dashoffset 1.2s cubic-bezier(0.4, 0, 0.2, 1), stroke 0.8s ease;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+        }
+
+        .linear-progress-fill {
+            transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+            background: linear-gradient(90deg, #00c6ff 0%, #00f0ff 100%);
+            box-shadow: 0 0 12px #00f0ff;
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(10, 25, 65, 0.5);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #00f0ff;
+            border-radius: 3px;
+        }
+
+        /* Botão de Tela Cheia */
+        .fullscreen-btn {
+            position: fixed;
+            bottom: 15px;
+            right: 15px;
+            z-index: 100;
+            background: rgba(31, 41, 55, 0.8);
+            color: #f59e0b;
+            border: 1px solid #374151;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background 0.3s;
+        }
+
+        .fullscreen-btn:hover {
+            background: #374151;
+        }
+
+        /* Ajuste de escala fluida para projetores e monitores gigantes */
+        @media (min-width: 1600px) {
+            html {
+                font-size: 18px;
+            }
+        }
+        @media (min-width: 2000px) {
+            html {
+                font-size: 22px;
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen text-white relative circuit-bg flex flex-col justify-between p-4 md:p-8 select-none font-sans">
+
+  <button class="fullscreen-btn" onclick="toggleFullScreen()">⛶</button>
+
+    <!-- Tech Canvas for Animated Nodes & Lines Background -->
+    <canvas id="circuitCanvas" class="absolute inset-0 pointer-events-none z-0 opacity-40"></canvas>
+
+    <!-- MAIN DASHBOARD CONTENT LAYER -->
+    <div class="relative z-10 flex flex-col justify-between min-h-screen max-w-[95vw] 2xl:max-w-[90vw] mx-auto w-full">
+
+        <!-- HEADER: IBG LOGO & ACTION BUTTONS -->
+        <header class="flex flex-col sm:flex-row justify-between items-center gap-4 w-full pt-2">
+            <div class="flex items-center">
+                <img 
+                    src="https://assets.eklesiaonline.com.br/EK3695/PaginaWeb/1_d4325469-39e7-49b0-8241-33dce1e31232.png" 
+                    alt="IBG Logo - Lugar de Recomeços" 
+                    class="h-16 sm:h-20 lg:h-24 w-auto object-contain filter drop-shadow-[0_0_12px_rgba(0,240,255,0.3)] transition transform hover:scale-105 duration-300"
+                    onerror="this.onerror=null; this.src='https://placehold.co/220x70/0b1b3d/00f0ff?text=IBG+LOGO';"
+                />
+            </div>
+
+            <div class="flex items-center gap-3 sm:gap-4 flex-wrap justify-center">
+                <div id="syncBadge" class="hidden md:flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-900/80 border border-emerald-500/50 text-emerald-400 text-xs sm:text-sm font-semibold tracking-wider">
+                    <span id="syncDot" class="w-3 h-3 rounded-full bg-emerald-400 animate-pulse"></span>
+                    <span id="syncStatusText">Apps Script Conectado</span>
+                </div>
+
+                <button id="openHistoryBtn" class="flex items-center gap-2 bg-slate-900/80 hover:bg-ibg-blue border border-ibg-cyan text-ibg-cyan hover:text-white px-4 py-2.5 rounded-xl transition duration-300 shadow-lg hover:shadow-ibg-cyan/30 text-xs sm:text-base font-semibold tracking-wider backdrop-blur-md">
+                    <i class="fa-solid fa-clock-rotate-left text-ibg-cyan"></i>
+                    <span>Ver Histórico</span>
+                </button>
+
+                <button id="openConfigBtn" class="flex items-center gap-2 bg-ibg-blue/80 hover:bg-ibg-brightBlue/80 border border-ibg-cyan text-ibg-cyan hover:text-white px-4 py-2.5 rounded-xl transition duration-300 shadow-lg hover:shadow-ibg-cyan/30 text-xs sm:text-base font-semibold tracking-wider backdrop-blur-md">
+                    <i class="fa-solid fa-sliders"></i>
+                    <span class="hidden sm:inline">Configurações</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- MIDDLE / MAIN DASHBOARD DISPLAY AREA -->
+        <main class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 my-auto py-8">
+            
+            <div class="lg:col-span-7 flex flex-col justify-center">
+                <div id="leftBox" class="ibg-box rounded-3xl p-8 md:p-12 relative overflow-hidden animate-box-entry min-h-[380px] lg:min-h-[460px] flex flex-col justify-center">
+                    
+                    <div class="flex justify-between items-baseline mb-8 border-b border-ibg-cyan/30 pb-6">
+                        <div>
+                            <span class="text-sm lg:text-base uppercase tracking-widest text-ibg-cyan font-bold block mb-2">Período de Referência</span>
+                            <h1 id="monthDisplay" class="font-bold text-4xl sm:text-5xl md:text-6xl lg:text-7xl tracking-wider text-white uppercase ibg-glow-text">
+                                CARREGANDO...
+                            </h1>
+                        </div>
+                        <div class="text-right"><span class="text-sm lg:text-base uppercase tracking-widest text-ibg-cyan font-bold block mb-2">Última atualização</span>
+                            <span id="dateDisplay" class="font-bold text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-ibg-cyan tracking-widest">
+                                --/--
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="my-6">
+                        <div class="flex justify-between text-base lg:text-xl font-semibold text-slate-300 mb-4 tracking-wider">
+                            <span class="flex items-center gap-3">
+                                <i class="fa-regular fa-calendar-days text-ibg-cyan"></i>
+                                Progresso Mensal (Dias)
+                            </span>
+                            <span id="dayRatioText" class="text-ibg-cyan font-bold tracking-widest">-- / -- Dias</span>
+                        </div>
+
+                        <div class="w-full h-8 sm:h-10 bg-slate-950/80 rounded-full p-1.5 border border-ibg-cyan/40 relative overflow-hidden shadow-inner">
+                            <div id="linearBarFill" class="h-full rounded-full linear-progress-fill w-0"></div>
+                        </div>
+
+                        <div class="flex justify-between text-xs sm:text-sm lg:text-base text-slate-400 mt-4 font-medium tracking-wider">
+                            <span>Dia 01</span>
+                            <span id="monthEndLabel">Dia 30</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="lg:col-span-5 flex items-center justify-center">
+                <div id="rightBox" class="ibg-box rounded-3xl p-8 md:p-12 w-full flex flex-col items-center justify-center relative animate-box-entry min-h-[380px] lg:min-h-[460px]">
+                    
+                    <span class="text-xs sm:text-sm lg:text-base uppercase tracking-widest text-ibg-cyan font-bold mb-8 text-center">
+                        Acompanhamento Semanal de Dízimos e Ofertas
+                    </span>
+
+                    <div class="relative w-64 h-64 sm:w-80 sm:h-80 lg:w-96 lg:h-96 flex items-center justify-center">
+                        <svg class="w-full h-full transform -rotate-90" viewBox="0 0 120 120">
+                            <defs>
+                                <linearGradient id="gaugeGradientOrange" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#ff7700" />
+                                    <stop offset="100%" stop-color="#f97316" />
+                                </linearGradient>
+                                <linearGradient id="gaugeGradientYellow" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#facc15" />
+                                    <stop offset="100%" stop-color="#eab308" />
+                                </linearGradient>
+                                <linearGradient id="gaugeGradientGreen" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#00ffaa" />
+                                    <stop offset="100%" stop-color="#22c55e" />
+                                </linearGradient>
+                            </defs>
+
+                            <circle
+                                cx="60"
+                                cy="60"
+                                r="48"
+                                stroke="rgba(11, 27, 61, 0.85)"
+                                stroke-width="10"
+                                fill="transparent"
+                            />
+                            <circle
+                                class="progress-ring__circle"
+                                cx="60"
+                                cy="60"
+                                r="48"
+                                stroke="url(#gaugeGradientOrange)"
+                                stroke-width="10"
+                                stroke-linecap="round"
+                                fill="transparent"
+                                stroke-dasharray="301.59"
+                                stroke-dashoffset="301.59"
+                                id="circleProgress"
+                            />
+                        </svg>
+
+                        <div class="absolute inset-0 flex flex-col items-center justify-center text-center p-2">
+                            <span id="percentageDisplay" class="font-extrabold text-5xl sm:text-6xl lg:text-7xl text-white ibg-glow-text tracking-wider">
+                                0%
+                            </span>
+                            <span id="gaugeStatusText" class="text-xs sm:text-sm lg:text-base text-ibg-cyan uppercase tracking-widest font-bold mt-3">
+                                Carregando...
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 text-center">
+                        <p id="percentageSubtitle" class="text-xs sm:text-base lg:text-lg text-slate-300 tracking-wider font-medium">
+                            Louvado seja Deus!
+                        </p>
+                    </div>
+
+                </div>
+            </div>
+
+        </main>
+
+        <footer class="py-4 text-center md:text-left text-xs sm:text-sm text-slate-400 flex flex-col md:flex-row justify-between items-center gap-2 border-t border-slate-800/80 tracking-wider">
+            <div>
+                <span>IBG &copy; 2026 - Painel de Monitoramento Dinâmico</span>
+            </div>
+            <div class="flex gap-6">
+                <span class="flex items-center gap-2"><i class="fa-solid fa-wifi text-emerald-400 text-xs"></i> Conexão Ativa</span>
+                <span id="sheetSourceLabel" class="text-slate-400">Fonte: Google Apps Script API</span>
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- HISTORY / DATE SELECTOR MODAL -->
+    <div id="historyModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="bg-ibg-darkBlue border border-ibg-cyan rounded-2xl max-w-xl w-full p-8 shadow-2xl relative max-h-[85vh] flex flex-col">
+            
+            <button id="closeHistoryBtn" class="absolute top-5 right-5 text-slate-400 hover:text-white text-2xl p-1">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <h2 class="text-2xl font-bold text-white flex items-center gap-3 mb-2 tracking-wider">
+                <i class="fa-solid fa-clock-rotate-left text-ibg-cyan"></i> Histórico de Registros
+            </h2>
+            <p class="text-sm text-slate-400 mb-6 tracking-wider">Selecione uma data para visualizar os dados anteriores do Apps Script.</p>
+
+            <div id="historyList" class="space-y-3 overflow-y-auto pr-2 my-2 flex-1 max-h-96">
+            </div>
+
+            <div class="mt-6 pt-4 border-t border-slate-800 text-right">
+                <button id="closeHistoryBottomBtn" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-6 py-2.5 rounded-xl text-sm font-semibold tracking-wider transition">
+                    Fechar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- CONFIGURATION MODAL -->
+    <div id="configModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="bg-ibg-darkBlue border border-ibg-cyan rounded-2xl max-w-2xl w-full p-8 shadow-2xl relative max-h-[90vh] overflow-y-auto">
+            
+            <button id="closeConfigBtn" class="absolute top-5 right-5 text-slate-400 hover:text-white text-2xl p-1">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <h2 class="text-2xl font-bold text-white flex items-center gap-3 mb-2 tracking-wider">
+                <i class="fa-solid fa-gear text-ibg-cyan"></i> Configuração da Fonte de Dados
+            </h2>
+            <p class="text-sm text-slate-400 mb-6 tracking-wider">Conecte sua Web App do Google Apps Script ou altere manualmente.</p>
+
+            <div class="flex border-b border-slate-700 mb-6">
+                <button id="tabScriptBtn" class="py-2.5 px-5 text-xs sm:text-sm font-bold border-b-2 border-ibg-cyan text-ibg-cyan uppercase tracking-wider">
+                    <i class="fa-solid fa-code border-none mr-2"></i> Apps Script Web App
+                </button>
+                <button id="tabManualBtn" class="py-2.5 px-5 text-xs sm:text-sm font-bold border-b-2 border-transparent text-slate-400 hover:text-white uppercase tracking-wider">
+                    <i class="fa-solid fa-sliders mr-2"></i> Simulação Manual
+                </button>
+            </div>
+
+            <!-- TAB 1: APPS SCRIPT -->
+            <div id="tabScriptContent" class="space-y-5">
+                <div>
+                    <label class="block text-xs sm:text-sm font-bold text-slate-300 uppercase mb-2 tracking-wider">URL do Apps Script (Web App Executável)</label>
+                    <input type="text" id="scriptUrlInput" placeholder="https://script.google.com/macros/s/.../exec" 
+                        class="w-full bg-slate-900 border border-slate-700 focus:border-ibg-cyan text-white text-sm rounded-xl p-3.5 outline-none transition tracking-wider">
+                </div>
+
+                <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-5 text-xs sm:text-sm text-slate-300 space-y-2 tracking-wider">
+                    <div class="font-semibold text-ibg-cyan flex items-center gap-2">
+                        <i class="fa-solid fa-circle-info"></i> Integração Apps Script:
+                    </div>
+                    <p class="text-slate-400 leading-relaxed">
+                        Certifique-se de implantar o Apps Script configurando a permissão do aplicativo web como: 
+                        <strong class="text-slate-200">"Qualquer pessoa" (Anyone)</strong>.
+                    </p>
+                </div>
+
+                <button id="fetchScriptBtn" class="w-full bg-ibg-brightBlue hover:bg-blue-600 text-white font-bold py-3.5 rounded-xl transition flex items-center justify-center gap-2 text-sm uppercase tracking-widest shadow-lg shadow-blue-500/20">
+                    <i class="fa-solid fa-rotate"></i> Sincronizar Agora
+                </button>
+            </div>
+
+            <!-- TAB 2: MANUAL -->
+            <div id="tabManualContent" class="space-y-5 hidden">
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs sm:text-sm font-bold text-slate-300 uppercase mb-1 tracking-wider">Dia (1 a 31)</label>
+                        <input type="number" id="manualDayInput" min="1" max="31" value="18" 
+                            class="w-full bg-slate-900 border border-slate-700 focus:border-ibg-cyan text-white text-base rounded-xl p-3 outline-none font-bold tracking-wider">
+                    </div>
+                    <div>
+                        <label class="block text-xs sm:text-sm font-bold text-slate-300 uppercase mb-1 tracking-wider">Mês</label>
+                        <select id="manualMonthSelect" class="w-full bg-slate-900 border border-slate-700 focus:border-ibg-cyan text-white text-base rounded-xl p-3 outline-none tracking-wider">
+                            <option value="1">Janeiro (01)</option>
+                            <option value="2">Fevereiro (02)</option>
+                            <option value="3">Março (03)</option>
+                            <option value="4">Abril (04)</option>
+                            <option value="5">Maio (05)</option>
+                            <option value="6">Junho (06)</option>
+                            <option value="7">Julho (07)</option>
+                            <option value="8">Agosto (08)</option>
+                            <option value="9" selected>Setembro (09)</option>
+                            <option value="10">Outubro (10)</option>
+                            <option value="11">Novembro (11)</option>
+                            <option value="12">Dezembro (12)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="flex justify-between items-center mb-2">
+                        <label class="text-xs sm:text-sm font-bold text-slate-300 uppercase tracking-wider">Porcentagem (%)</label>
+                        <span id="manualSliderVal" class="text-sm text-ibg-cyan font-bold tracking-wider">75,5%</span>
+                    </div>
+                    <input type="range" id="manualPercentInput" min="0" max="160" step="0.5" value="75.5" 
+                        class="w-full accent-ibg-cyan cursor-pointer">
+                    <span class="text-xs text-slate-400 mt-1 block">Permite valores maiores que 100%.</span>
+                </div>
+
+                <button id="applyManualBtn" class="w-full bg-ibg-brightBlue hover:bg-blue-600 text-white font-bold py-3.5 rounded-xl transition text-sm uppercase tracking-widest">
+                    Aplicar Valores Manuais
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+<!-- JAVASCRIPT LOGIC -->
+    <script>
+        const monthNames = [
+            "JANEIRO", "FEVEREIRO", "MARÇO", "ABRIL", "MAIO", "JUNHO",
+            "JULHO", "AGOSTO", "SETEMBRO", "OUTUBRO", "NOVEMBRO", "DEZEMBRO"
+        ];
+
+        const DEFAULT_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbykKFgLG-kv5MSQaE_O7t6vkeTJMvQSBma6uxdFjhJ_M9qmTa1z7DJFsF40Gwkrzj-8/exec";
+
+        // Cache local: guarda o último dado válido recebido do Apps Script.
+        // A tela usa esse dado imediatamente e atualiza em segundo plano.
+        let historyRecords = [];
+        const LOCAL_CACHE_KEY = "ibg_dizimos_ofertas_cache_v1";
+        const LOCAL_CACHE_MAX_AGE = 7 * 24 * 60 * 60 * 1000; // 7 dias
+
+        function loadLocalCache() {
+            try {
+                const raw = localStorage.getItem(LOCAL_CACHE_KEY);
+                if (!raw) return null;
+                const cached = JSON.parse(raw);
+                if (!cached || !Array.isArray(cached.records) || !cached.records.length) return null;
+                if (Date.now() - Number(cached.savedAt || 0) > LOCAL_CACHE_MAX_AGE) return null;
+                return cached;
+            } catch (e) {
+                console.warn("Não foi possível ler o cache local:", e);
+                return null;
+            }
+        }
+
+        function saveLocalCache(records) {
+            try {
+                localStorage.setItem(LOCAL_CACHE_KEY, JSON.stringify({
+                    savedAt: Date.now(),
+                    records
+                }));
+            } catch (e) {
+                console.warn("Não foi possível salvar o cache local:", e);
+            }
+        }
+
+        function formatCacheAge(savedAt) {
+            if (!savedAt) return "";
+            const seconds = Math.max(0, Math.floor((Date.now() - savedAt) / 1000));
+            if (seconds < 60) return "agora mesmo";
+            if (seconds < 3600) return `há ${Math.floor(seconds / 60)} min`;
+            if (seconds < 86400) return `há ${Math.floor(seconds / 3600)} h`;
+            return `há ${Math.floor(seconds / 86400)} dia(s)`;
+        }
+
+        function applyRecords(records, sourceLabel, animate = false) {
+            if (!records || !records.length) return false;
+            historyRecords = records;
+
+            // Usa o registro mais recente como valor exibido no painel.
+            const latest = [...records].sort((a, b) =>
+                (b.month * 31 + b.day) - (a.month * 31 + a.day)
+            )[0];
+
+            if (latest) {
+                state.day = latest.day;
+                state.month = latest.month;
+                state.percentage = latest.percentage;
+                updateDashboardUI(animate);
+            }
+
+            document.getElementById('sheetSourceLabel').textContent = sourceLabel;
+            renderHistoryModal();
+            return true;
+        }
+
+        function showCachedDataIfAvailable() {
+            const cached = loadLocalCache();
+            if (!cached) return false;
+
+            if (applyRecords(
+                cached.records,
+                `Fonte: Cache local (${formatCacheAge(cached.savedAt)})`,
+                false
+            )) {
+                syncStatusText.textContent = "Último dado salvo";
+                syncDot.className = "w-2.5 h-2.5 rounded-full bg-cyan-400";
+                return true;
+            }
+            return false;
+        }
+
+        // Estado do Dashboard
+        let state = {
+            day: 18,
+            month: 9, 
+            percentage: 0,
+            scriptUrl: DEFAULT_APPS_SCRIPT_URL
+        };
+
+        // Elementos DOM
+        const leftBox = document.getElementById('leftBox');
+        const rightBox = document.getElementById('rightBox');
+        const monthDisplay = document.getElementById('monthDisplay');
+        const dateDisplay = document.getElementById('dateDisplay');
+        const dayRatioText = document.getElementById('dayRatioText');
+        const linearBarFill = document.getElementById('linearBarFill');
+        const monthEndLabel = document.getElementById('monthEndLabel');
+        const percentageDisplay = document.getElementById('percentageDisplay');
+        const circleProgress = document.getElementById('circleProgress');
+        const gaugeStatusText = document.getElementById('gaugeStatusText');
+        const syncStatusText = document.getElementById('syncStatusText');
+        const syncBadge = document.getElementById('syncBadge');
+        const syncDot = document.getElementById('syncDot');
+
+        // Modais e Controles
+        const configModal = document.getElementById('configModal');
+        const historyModal = document.getElementById('historyModal');
+        const historyList = document.getElementById('historyList');
+        const openConfigBtn = document.getElementById('openConfigBtn');
+        const closeConfigBtn = document.getElementById('closeConfigBtn');
+        const openHistoryBtn = document.getElementById('openHistoryBtn');
+        const closeHistoryBtn = document.getElementById('closeHistoryBtn');
+        const closeHistoryBottomBtn = document.getElementById('closeHistoryBottomBtn');
+
+        const tabScriptBtn = document.getElementById('tabScriptBtn');
+        const tabManualBtn = document.getElementById('tabManualBtn');
+        const tabScriptContent = document.getElementById('tabScriptContent');
+        const tabManualContent = document.getElementById('tabManualContent');
+        const scriptUrlInput = document.getElementById('scriptUrlInput');
+        const fetchScriptBtn = document.getElementById('fetchScriptBtn');
+        const manualDayInput = document.getElementById('manualDayInput');
+        const manualMonthSelect = document.getElementById('manualMonthSelect');
+        const manualPercentInput = document.getElementById('manualPercentInput');
+        const manualSliderVal = document.getElementById('manualSliderVal');
+        const applyManualBtn = document.getElementById('applyManualBtn');
+
+        function getDaysInMonth(month, year = new Date().getFullYear()) {
+            return new Date(year, month, 0).getDate();
+        }
+
+        function formatDateString(day, month) {
+            const d = String(day).padStart(2, '0');
+            const m = String(month).padStart(2, '0');
+            return `${d}/${m}`;
+        }
+
+        function triggerCardAnimations() {
+            leftBox.classList.remove('animate-box-entry');
+            rightBox.classList.remove('animate-box-entry');
+            
+            void leftBox.offsetWidth;
+            void rightBox.offsetWidth;
+
+            leftBox.classList.add('animate-box-entry');
+            rightBox.classList.add('animate-box-entry');
+        }
+
+        function updateDashboardUI(animate = true) {
+            const currentYear = new Date().getFullYear();
+            const totalDays = getDaysInMonth(state.month, currentYear);
+            const validDay = Math.min(Math.max(1, state.day), totalDays);
+            
+            const monthName = monthNames[state.month - 1] || "MÊS";
+            monthDisplay.textContent = monthName;
+            dateDisplay.textContent = formatDateString(validDay, state.month);
+
+            const dayPercentage = Math.min(100, Math.max(0, (validDay / totalDays) * 100));
+            dayRatioText.textContent = `${validDay} / ${totalDays} Dias`;
+            monthEndLabel.textContent = `Dia ${totalDays}`;
+            linearBarFill.style.width = `${dayPercentage}%`;
+
+            const formattedPercentage = Number(state.percentage).toLocaleString('pt-BR', {
+                minimumFractionDigits: 1,
+                maximumFractionDigits: 1
+            });
+            percentageDisplay.textContent = `${formattedPercentage}%`;
+
+            const radius = 48;
+            const circumference = 2 * Math.PI * radius;
+            
+            const visualPercent = Math.min(100, Math.max(0, state.percentage));
+            const strokeDashoffset = circumference - (visualPercent / 100) * circumference;
+            circleProgress.style.strokeDashoffset = strokeDashoffset;
+
+            if (state.percentage < 40) {
+                circleProgress.setAttribute('stroke', 'url(#gaugeGradientOrange)');
+                gaugeStatusText.textContent = "Prossigamos com fé!";
+                gaugeStatusText.className = "text-xs text-orange-400 uppercase tracking-widest font-bold mt-2";
+            } else if (state.percentage < 75) {
+                circleProgress.setAttribute('stroke', 'url(#gaugeGradientYellow)');
+                gaugeStatusText.textContent = "Em Progresso";
+                gaugeStatusText.className = "text-xs text-yellow-400 uppercase tracking-widest font-bold mt-2";
+            } else if (state.percentage >= 100) {
+                circleProgress.setAttribute('stroke', 'url(#gaugeGradientGreen)');
+                gaugeStatusText.textContent = "Deus é Fiel! 🎉";
+                gaugeStatusText.className = "text-xs text-emerald-400 uppercase tracking-widest font-bold mt-2";
+            } else {
+                circleProgress.setAttribute('stroke', 'url(#gaugeGradientGreen)');
+                gaugeStatusText.textContent = "Meta Próxima";
+                gaugeStatusText.className = "text-xs text-emerald-400 uppercase tracking-widest font-bold mt-2";
+            }
+
+            if (animate) {
+                triggerCardAnimations();
+            }
+        }
+
+        function renderHistoryModal() {
+            historyList.innerHTML = "";
+            
+            if (!historyRecords || historyRecords.length === 0) {
+                historyList.innerHTML = `<div class="text-center text-slate-400 py-6 text-xs">Nenhum registro encontrado.</div>`;
+                return;
+            }
+
+            const sorted = [...historyRecords].sort((a, b) => (a.month * 31 + a.day) - (b.month * 31 + b.day));
+
+            sorted.forEach(rec => {
+                const isActive = (rec.day === state.day && rec.month === state.month);
+                const card = document.createElement('div');
+                card.className = `p-3 rounded-xl border flex justify-between items-center cursor-pointer transition ${
+                    isActive 
+                    ? 'bg-ibg-blue border-ibg-cyan shadow-md shadow-ibg-cyan/20' 
+                    : 'bg-slate-900/60 border-slate-800 hover:border-slate-600 hover:bg-slate-900'
+                }`;
+
+                let colorClass = "text-orange-400";
+                if (rec.percentage >= 75) colorClass = "text-emerald-400";
+                else if (rec.percentage >= 40) colorClass = "text-yellow-400";
+
+                card.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <div class="w-9 h-9 rounded-lg bg-slate-950/80 flex items-center justify-center text-ibg-cyan text-xs font-bold">
+                            ${String(rec.day).padStart(2,'0')}
+                        </div>
+                        <div>
+                            <div class="text-xs font-bold text-white tracking-wider">${monthNames[rec.month - 1] || 'MÊS'}</div>
+                            <div class="text-[11px] text-slate-400">Data: ${formatDateString(rec.day, rec.month)}</div>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <span class="text-sm font-extrabold ${colorClass} tracking-wider">${rec.percentage.toLocaleString('pt-BR')}%</span>
+                        <span class="block text-[10px] text-slate-400 uppercase font-semibold">Atingimento</span>
+                    </div>
+                `;
+
+                // CLIQUE NO ITEM DO HISTÓRICO: Atualiza a tela e fecha a modal
+                card.addEventListener('click', () => {
+                    state.day = rec.day;
+                    state.month = rec.month;
+                    state.percentage = rec.percentage;
+                    
+                    updateDashboardUI(true);
+                    
+                    // Oculta a modal de histórico
+                    historyModal.classList.add('opacity-0', 'pointer-events-none');
+                });
+
+                historyList.appendChild(card);
+            });
+        }
+
+        function processAppsScriptData(jsonData) {
+            try {
+                let items = [];
+
+                if (Array.isArray(jsonData)) {
+                    jsonData.forEach((row, idx) => {
+                        if (Array.isArray(row)) {
+                            if (idx === 0 && (typeof row[0] === 'string' && isNaN(Number(row[0])))) return;
+                            if (row.length >= 2) {
+                                let d = parseInt(row[0], 10) || 1;
+                                let m = row.length >= 3 ? parseInt(row[1], 10) : state.month;
+                                let pVal = row[row.length - 1];
+                                let p = parseFloat(String(pVal).replace('%', '').replace(',', '.')) || 0;
+                                items.push({ day: d, month: m, percentage: p });
+                            }
+                        } else if (typeof row === 'object' && row !== null) {
+                            let d = parseInt(row.dia || row.day || row.Dia || 1, 10);
+                            let m = parseInt(row.mes || row.month || row.Mes || row.Mês || state.month, 10);
+                            let rawP = row.porcentagem || row.percentage || row.Porcentagem || row.valor || 0;
+                            let p = parseFloat(String(rawP).replace('%', '').replace(',', '.')) || 0;
+                            items.push({ day: d, month: m, percentage: p });
+                        }
+                    });
+                } else if (typeof jsonData === 'object' && jsonData !== null) {
+                    const list = jsonData.data || jsonData.items || [jsonData];
+                    return processAppsScriptData(list);
+                }
+
+                return items;
+            } catch (e) {
+                console.error("Erro ao processar dados do Apps Script:", e);
+                return null;
+            }
+        }
+
+        async function fetchAppsScriptData(url, options = {}) {
+            if (!url) return;
+
+            const timeoutMs = options.timeoutMs || 8000;
+
+            syncBadge.classList.remove('hidden');
+            syncBadge.classList.add('flex');
+            syncStatusText.textContent = historyRecords.length ? "Atualizando..." : "Buscando...";
+            syncDot.className = "w-2.5 h-2.5 rounded-full bg-yellow-400 animate-pulse";
+
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
+            try {
+                // Evita reaproveitar uma resposta antiga do navegador/proxy.
+                const separator = url.includes('?') ? '&' : '?';
+                const requestUrl = `${url}${separator}_ts=${Date.now()}`;
+
+                const response = await fetch(requestUrl, {
+                    method: 'GET',
+                    redirect: 'follow',
+                    cache: 'no-store',
+                    signal: controller.signal
+                });
+
+                if (!response.ok) throw new Error(`Erro HTTP ${response.status}`);
+
+                const jsonData = await response.json();
+                const records = processAppsScriptData(jsonData);
+
+                if (!records || !records.length) {
+                    throw new Error("Nenhum dado válido retornado");
+                }
+
+                // Guarda a última resposta REAL para a próxima abertura.
+                saveLocalCache(records);
+                applyRecords(records, "Fonte: Google Apps Script", true);
+
+                syncStatusText.textContent = "Apps Script atualizado";
+                syncDot.className = "w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse";
+
+            } catch (err) {
+                const reason = err.name === "AbortError"
+                    ? `tempo limite de ${timeoutMs / 1000}s`
+                    : err.message;
+
+                console.warn(`Atualização do Apps Script não concluída (${reason}).`, err);
+
+                // Se já temos dados reais salvos, mantém esses dados.
+                if (historyRecords.length > 0) {
+                    syncStatusText.textContent = "Último dado salvo";
+                    syncDot.className = "w-2.5 h-2.5 rounded-full bg-cyan-400";
+                    document.getElementById('sheetSourceLabel').textContent =
+                        "Fonte: Cache local — aguardando atualização";
+                } else {
+                    // Só usa os dados de demonstração se este navegador nunca
+                    // tiver recebido uma resposta válida.
+                    historyRecords = [
+                        { day: 7, month: 9, percentage: 35.0 },
+                        { day: 14, month: 9, percentage: 62.8 },
+                        { day: 18, month: 9, percentage: 75.5 },
+                        { day: 21, month: 9, percentage: 88.0 },
+                        { day: 28, month: 9, percentage: 102.4 }
+                    ];
+
+                    applyRecords(historyRecords, "Fonte: Dados de demonstração", false);
+                    syncStatusText.textContent = "Modo Histórico Ativo";
+                    syncDot.className = "w-2.5 h-2.5 rounded-full bg-emerald-400";
+                }
+            } finally {
+                clearTimeout(timeoutId);
+
+                // Mantém o comportamento original de abrir o histórico ao carregar.
+                renderHistoryModal();
+                historyModal.classList.remove('opacity-0', 'pointer-events-none');
+            }
+        }
+
+        // Preenche a URL no Modal de Configurações
+        scriptUrlInput.value = DEFAULT_APPS_SCRIPT_URL;
+
+        // Event Listeners dos Modais e Botões
+        openConfigBtn.addEventListener('click', () => {
+            configModal.classList.remove('opacity-0', 'pointer-events-none');
+        });
+
+        closeConfigBtn.addEventListener('click', () => {
+            configModal.classList.add('opacity-0', 'pointer-events-none');
+        });
+
+        openHistoryBtn.addEventListener('click', () => {
+            renderHistoryModal();
+            historyModal.classList.remove('opacity-0', 'pointer-events-none');
+        });
+
+        closeHistoryBtn.addEventListener('click', () => {
+            historyModal.classList.add('opacity-0', 'pointer-events-none');
+        });
+
+        closeHistoryBottomBtn.addEventListener('click', () => {
+            historyModal.classList.add('opacity-0', 'pointer-events-none');
+        });
+
+        tabScriptBtn.addEventListener('click', () => {
+            tabScriptBtn.className = "py-2 px-4 text-xs font-bold border-b-2 border-ibg-cyan text-ibg-cyan uppercase tracking-wider";
+            tabManualBtn.className = "py-2 px-4 text-xs font-bold border-b-2 border-transparent text-slate-400 hover:text-white uppercase tracking-wider";
+            tabScriptContent.classList.remove('hidden');
+            tabManualContent.classList.add('hidden');
+        });
+
+        tabManualBtn.addEventListener('click', () => {
+            tabManualBtn.className = "py-2 px-4 text-xs font-bold border-b-2 border-ibg-cyan text-ibg-cyan uppercase tracking-wider";
+            tabScriptBtn.className = "py-2 px-4 text-xs font-bold border-b-2 border-transparent text-slate-400 hover:text-white uppercase tracking-wider";
+            tabManualContent.classList.remove('hidden');
+            tabScriptContent.classList.add('hidden');
+        });
+
+        manualPercentInput.addEventListener('input', (e) => {
+            manualSliderVal.textContent = `${parseFloat(e.target.value).toLocaleString('pt-BR')}%`;
+        });
+
+        applyManualBtn.addEventListener('click', () => {
+            state.day = parseInt(manualDayInput.value, 10) || 1;
+            state.month = parseInt(manualMonthSelect.value, 10) || 1;
+            state.percentage = parseFloat(manualPercentInput.value) || 0;
+            
+            const existingIdx = historyRecords.findIndex(r => r.day === state.day && r.month === state.month);
+            if (existingIdx !== -1) {
+                historyRecords[existingIdx].percentage = state.percentage;
+            } else {
+                historyRecords.push({ day: state.day, month: state.month, percentage: state.percentage });
+            }
+
+            updateDashboardUI(true);
+            configModal.classList.add('opacity-0', 'pointer-events-none');
+            document.getElementById('sheetSourceLabel').textContent = "Fonte: Dados Manuais / Teste";
+        });
+
+        fetchScriptBtn.addEventListener('click', () => {
+            const url = scriptUrlInput.value.trim();
+            if (url) {
+                state.scriptUrl = url;
+                fetchAppsScriptData(url);
+                configModal.classList.add('opacity-0', 'pointer-events-none');
+            } else {
+                alert("Por favor, insira uma URL válida do Apps Script.");
+            }
+        });
+
+        // Animação do Canvas de Fundo
+        function initCanvasAnimation() {
+            const canvas = document.getElementById('circuitCanvas');
+            const ctx = canvas.getContext('2d');
+
+            function resize() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+            window.addEventListener('resize', resize);
+            resize();
+
+            const nodes = [];
+            const nodeCount = Math.floor(window.innerWidth / 35);
+
+            for (let i = 0; i < nodeCount; i++) {
+                nodes.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    vx: (Math.random() - 0.5) * 0.35,
+                    vy: (Math.random() - 0.5) * 0.35,
+                    radius: Math.random() * 2 + 1
+                });
+            }
+
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                ctx.strokeStyle = 'rgba(0, 240, 255, 0.08)';
+                ctx.lineWidth = 1;
+
+                for (let i = 0; i < nodes.length; i++) {
+                    for (let j = i + 1; j < nodes.length; j++) {
+                        const dx = nodes[i].x - nodes[j].x;
+                        const dy = nodes[i].y - nodes[j].y;
+                        const dist = Math.sqrt(dx * dx + dy * dy);
+
+                        if (dist < 140) {
+                            ctx.beginPath();
+                            ctx.moveTo(nodes[i].x, nodes[i].y);
+                            ctx.lineTo(nodes[j].x, nodes[j].y);
+                            ctx.stroke();
+                        }
+                    }
+                }
+
+                nodes.forEach(node => {
+                    node.x += node.vx;
+                    node.y += node.vy;
+
+                    if (node.x < 0 || node.x > canvas.width) node.vx *= -1;
+                    if (node.y < 0 || node.y > canvas.height) node.vy *= -1;
+
+                    ctx.fillStyle = '#00f0ff';
+                    ctx.beginPath();
+                    ctx.arc(node.x, node.y, node.radius, 0, Math.PI * 2);
+                    ctx.fill();
+                });
+
+                requestAnimationFrame(animate);
+            }
+
+            animate();
+        }
+
+        // Executado ao abrir a página
+        window.onload = function() {
+            initCanvasAnimation();
+
+            // Primeiro mostra o último dado salvo, sem esperar a internet.
+            const hasCache = showCachedDataIfAvailable();
+
+            // Depois consulta o Apps Script em segundo plano.
+            // Se ele demorar, o usuário continua vendo o último dado conhecido.
+            fetchAppsScriptData(state.scriptUrl, {
+                background: hasCache,
+                timeoutMs: 8000
+            });
+        };
+
+        function toggleFullScreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.error(`Erro ao ativar tela cheia: ${err.message}`);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+    </script>
+</body>
+</html>
