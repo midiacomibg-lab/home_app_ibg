@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IBG - Igreja Batista Graça - Versão.202609082004</title>
+    <title>IBG - Igreja Batista Graça - Versão.202609291053</title>
     
     <style>
         * {
@@ -380,7 +380,7 @@ function aplicarAtributosLink(elementoA, url) {
             fetch(API_EVENTOS)
                 .then(res => res.ok ? res.json() : Promise.reject("HTTP " + res.status))
                 .then(eventos => {
-                    const eventosSite = (eventos || []).filter(e => String(e.site || e.app || "").trim().toUpperCase() === "SIM");
+                    const eventosSite = (eventos || []).filter(e => String(e.app || "").trim().toUpperCase() === "SIM");
                     if(!eventosSite.length){
                         container.innerHTML = `<div class="eks-events-empty">Nenhum evento disponível no momento.</div>`;
                         return;
