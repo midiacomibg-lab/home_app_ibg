@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IBG - Igreja Batista Graça - Versão.202609291053</title>
+    <title>IBG - Igreja Batista Graça - Versão.202610131816</title>
     
     <style>
         * {
@@ -152,6 +152,48 @@
         .eks-prefix .bullet { width: 8px; height: 8px; background-color: var(--olive-primary); border-radius: 50%; flex-shrink: 0; }
         .eks-prefix .bank-item .highlight { color: var(--text-primary); font-weight: 800; }
 
+
+        /* FOTOS — arquivo em árvore: ano > mês > evento */
+        .eks-prefix .fotos-section { padding: 38px 20px 60px; }
+        .eks-prefix .fotos-wrap {
+            width: 100%; max-width: 900px; margin: 0 auto; padding: 18px;
+            background: var(--glass-bg); border: 1px solid var(--glass-border);
+            border-radius: 20px;
+        }
+        .eks-prefix .fotos-ajuda {
+            margin: 0 auto 16px; max-width: 900px; color: var(--text-secondary);
+            font-size: 14px; text-align: center;
+        }
+        .eks-prefix .fotos-status { color: var(--text-secondary); text-align: center; padding: 20px 12px; font-size: 14px; }
+        .eks-prefix .fotos-tree, .eks-prefix .fotos-children { list-style: none; margin: 0; padding: 0; }
+        .eks-prefix .fotos-node + .fotos-node { margin-top: 8px; }
+        .eks-prefix .fotos-row {
+            display: flex; align-items: center; gap: 11px; width: 100%; min-height: 48px;
+            padding: 11px 14px; border: 1px solid var(--glass-border); border-radius: 13px;
+            color: var(--text-primary); background: rgba(255,255,255,.035); text-decoration: none;
+            text-align: left; font: inherit; font-size: 14px; cursor: pointer;
+            transition: background .2s ease, border-color .2s ease;
+        }
+        .eks-prefix .fotos-row:hover { background: rgba(122,139,105,.13); border-color: rgba(154,170,137,.45); }
+        .eks-prefix .fotos-row:focus-visible { outline: 2px solid var(--olive-light); outline-offset: 2px; }
+        .eks-prefix .fotos-row--year { background: rgba(122,139,105,.13); font-weight: 800; }
+        .eks-prefix .fotos-row--month { margin-left: 12px; width: calc(100% - 12px); }
+        .eks-prefix .fotos-row--event { margin-left: 24px; width: calc(100% - 24px); }
+        .eks-prefix .fotos-icon { flex: 0 0 20px; width: 20px; text-align: center; font-size: 17px; }
+        .eks-prefix .fotos-label { min-width: 0; flex: 1; overflow-wrap: anywhere; }
+        .eks-prefix .fotos-date { margin-left: auto; color: var(--text-secondary); font-size: 12px; white-space: nowrap; }
+        .eks-prefix .fotos-chevron { color: var(--olive-light); font-size: 12px; width: 12px; text-align: center; }
+        .eks-prefix .fotos-children { padding-top: 8px; padding-bottom: 4px; }
+        .eks-prefix .fotos-empty { color: var(--text-secondary); font-size: 13px; padding: 12px 18px; }
+        @media (max-width: 768px) {
+            .eks-prefix .fotos-section { padding: 28px 12px 44px; }
+            .eks-prefix .fotos-wrap { padding: 10px; }
+            .eks-prefix .fotos-row { padding: 10px; font-size: 13px; }
+            .eks-prefix .fotos-row--month { margin-left: 8px; width: calc(100% - 8px); }
+            .eks-prefix .fotos-row--event { margin-left: 16px; width: calc(100% - 16px); }
+            .eks-prefix .fotos-date { font-size: 11px; }
+        }
+
         @media (max-width: 768px) {
             .eks-events-grid { grid-template-columns: 1fr; }
             .eks-prefix .yt-nav { display: none; }
@@ -252,6 +294,21 @@
             </section>
         </section>
 
+
+        <!-- FOTOS -->
+        <section>
+            <div class="section-divider section-divider--title">
+                <h2 class="band-title">Fotos</h2>
+            </div>
+            <section class="fotos-section">
+                <p class="fotos-ajuda">Abra o ano e o mês desejados para encontrar as fotos dos cultos e eventos.</p>
+                <div class="fotos-wrap">
+                    <div id="fotos-status" class="fotos-status" role="status" aria-live="polite">Carregando pastas...</div>
+                    <ul id="fotos-tree" class="fotos-tree" aria-label="Arquivo de fotos por ano e mês"></ul>
+                </div>
+            </section>
+        </section>
+
         <!-- LIDERANÇA -->
         <section>
     <div class="section-divider section-divider--title">
@@ -301,7 +358,7 @@ function aplicarAtributosLink(elementoA, url) {
 
         /* SLIDER API */
         (function(){
-            const API = "https://script.google.com/macros/s/AKfycbwLQBHT_S1PXf4EVbqNQtYcczOZx8HGuSpIo4K-864UuPROnEAKorJv0fWFjvNZy6fQ/exec?tipo=slider";
+            const API = "https://script.google.com/macros/s/AKfycbz2n11oFReKnDF_HsSOzaoJ4_W7EdGG62RiQl-y65YSMkTEIpRFnyZxat4zGn0wj5rA/exec?tipo=slider";
             const slidesWrap = document.getElementById("heroSlides");
             const dotsWrap = document.getElementById("heroDots");
             const loading = document.getElementById("heroLoading");
@@ -361,7 +418,7 @@ function aplicarAtributosLink(elementoA, url) {
 
         /* EVENTOS API */
         (function(){
-            const API_EVENTOS = "https://script.google.com/macros/s/AKfycbwLQBHT_S1PXf4EVbqNQtYcczOZx8HGuSpIo4K-864UuPROnEAKorJv0fWFjvNZy6fQ/exec?tipo=eventos";
+            const API_EVENTOS = "https://script.google.com/macros/s/AKfycbz2n11oFReKnDF_HsSOzaoJ4_W7EdGG62RiQl-y65YSMkTEIpRFnyZxat4zGn0wj5rA/exec?tipo=eventos";
             const container = document.getElementById("eventos-container");
             if(!container) return;
 
@@ -420,7 +477,7 @@ function aplicarAtributosLink(elementoA, url) {
 
         /* BOTÕES/INSCRIÇÕES API */
         (function(){
-            const API_LINKS = "https://script.google.com/macros/s/AKfycbwLQBHT_S1PXf4EVbqNQtYcczOZx8HGuSpIo4K-864UuPROnEAKorJv0fWFjvNZy6fQ/exec";
+            const API_LINKS = "https://script.google.com/macros/s/AKfycbz2n11oFReKnDF_HsSOzaoJ4_W7EdGG62RiQl-y65YSMkTEIpRFnyZxat4zGn0wj5rA/exec";
             const container = document.getElementById("teste-links");
             if(!container) return;
 
@@ -445,6 +502,92 @@ function aplicarAtributosLink(elementoA, url) {
                 })
                 .catch(err => console.error(err));
         })();
+
+/* ARQUIVO DE FOTOS — dados fornecidos pelo Google Apps Script (?tipo=fotos) */
+(function carregarArquivoFotos(){
+    const API_FOTOS = "https://script.google.com/macros/s/AKfycbz2n11oFReKnDF_HsSOzaoJ4_W7EdGG62RiQl-y65YSMkTEIpRFnyZxat4zGn0wj5rA/exec?tipo=fotos";
+    const raiz = document.getElementById("fotos-tree");
+    const status = document.getElementById("fotos-status");
+    if (!raiz || !status) return;
+
+    const escapar = valor => String(valor ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+    const compararNomeDesc = (a, b) => String(b.name || "").localeCompare(String(a.name || ""), "pt-BR", {numeric:true, sensitivity:"base"});
+    const meses = ["janeiro","fevereiro","março","marco","abril","maio","junho","julho","agosto","setembro","outubro","novembro","dezembro"];
+    const ordenarItens = (itens, nivel) => itens.sort((a,b) => {
+        if (nivel === 1) {
+            const mesNum = nome => {
+                const n = String(nome || "").toLocaleLowerCase("pt-BR");
+                const numerico = n.match(/^\s*(0?[1-9]|1[0-2])(?:\D|$)/);
+                if (numerico) return Number(numerico[1]);
+                const idx = meses.findIndex(m => n.includes(m));
+                return idx >= 0 ? (idx === 12 ? 3 : idx + 1) : 0;
+            };
+            const ma = mesNum(a.name), mb = mesNum(b.name);
+            if (ma && mb && ma !== mb) return mb - ma;
+        }
+        return compararNomeDesc(a,b);
+    });
+    const formatarData = nome => {
+        const m = String(nome || "").match(/(?:^|\b)(20\d{2})[-_. ](0?[1-9]|1[0-2])[-_. ](0?[1-9]|[12]\d|3[01])(?:\b|$)/);
+        if (!m) return "";
+        return `${String(m[3]).padStart(2,"0")}/${String(m[2]).padStart(2,"0")}/${m[1]}`;
+    };
+    const urlPasta = item => item.url || (item.id ? `https://drive.google.com/drive/folders/${encodeURIComponent(item.id)}` : "https://drive.google.com/drive/folders/1N2YGXFekBPiVAYQyOupmtsQRB26XjFXl");
+
+    function criarNo(item, nivel){
+        const li = document.createElement("li");
+        li.className = "fotos-node";
+        const filhos = Array.isArray(item.children) ? ordenarItens(item.children.slice(), nivel + 1) : [];
+        const ehAno = nivel === 0;
+        const ehMes = nivel === 1;
+        const ehPastaComFilhos = filhos.length > 0;
+        const classe = `fotos-row ${ehAno ? "fotos-row--year" : ehMes ? "fotos-row--month" : "fotos-row--event"}`;
+        const data = formatarData(item.name);
+        if (ehPastaComFilhos) {
+            const botao = document.createElement("button");
+            botao.type = "button";
+            botao.className = classe;
+            botao.setAttribute("aria-expanded", "false");
+            botao.innerHTML = `<span class="fotos-icon" aria-hidden="true">📁</span><span class="fotos-label">${escapar(item.name)}</span>${data ? `<span class="fotos-date">${data}</span>` : ""}<span class="fotos-chevron" aria-hidden="true">▸</span>`;
+            const filhosLista = document.createElement("ul");
+            filhosLista.className = "fotos-children";
+            filhosLista.hidden = true;
+            filhos.forEach(filho => filhosLista.appendChild(criarNo(filho, nivel + 1)));
+            botao.addEventListener("click", () => {
+                const abrir = botao.getAttribute("aria-expanded") !== "true";
+                botao.setAttribute("aria-expanded", String(abrir));
+                filhosLista.hidden = !abrir;
+                const chevron = botao.querySelector(".fotos-chevron");
+                if (chevron) chevron.textContent = abrir ? "▾" : "▸";
+            });
+            li.appendChild(botao);
+            li.appendChild(filhosLista);
+        } else {
+            const a = document.createElement("a");
+            a.className = classe;
+            a.href = urlPasta(item);
+            a.target = "_blank";
+            a.rel = "noopener noreferrer";
+            a.innerHTML = `<span class="fotos-icon" aria-hidden="true">📂</span><span class="fotos-label">${escapar(item.name)}</span>${data ? `<span class="fotos-date">${data}</span>` : ""}<span class="fotos-chevron" aria-hidden="true">↗</span>`;
+            li.appendChild(a);
+        }
+        return li;
+    }
+
+    fetch(API_FOTOS)
+        .then(res => { if (!res.ok) throw new Error("HTTP " + res.status); return res.json(); })
+        .then(dados => {
+            const pastas = Array.isArray(dados) ? dados : (Array.isArray(dados.folders) ? dados.folders : null);
+            if (!pastas) throw new Error(dados && dados.error ? dados.error : "Resposta inválida da API de fotos");
+            ordenarItens(pastas, 0).forEach(pasta => raiz.appendChild(criarNo(pasta, 0)));
+            status.hidden = pastas.length > 0;
+            if (!pastas.length) status.textContent = "Nenhuma pasta de fotos foi encontrada.";
+        })
+        .catch(err => {
+            console.error("Erro ao carregar arquivo de fotos:", err);
+            status.textContent = "Não foi possível carregar as pastas agora. Verifique a conexão e a configuração do Apps Script.";
+        });
+})();
 
 /* BOTÕES LIDERANÇA */
 
@@ -492,7 +635,7 @@ function aplicarAtributosLink(elementoA, url) {
  /* YOUTUBE */
 
 const YT_SCRIPT_URL =
-  "https://script.google.com/macros/s/AKfycbwLQBHT_S1PXf4EVbqNQtYcczOZx8HGuSpIo4K-864UuPROnEAKorJv0fWFjvNZy6fQ/exec";
+  "https://script.google.com/macros/s/AKfycbz2n11oFReKnDF_HsSOzaoJ4_W7EdGG62RiQl-y65YSMkTEIpRFnyZxat4zGn0wj5rA/exec";
 
 const YT_CHANNEL_URL = "https://www.youtube.com/@IBGOFICIAL";
 const MAX_VIDEOS = 10;
