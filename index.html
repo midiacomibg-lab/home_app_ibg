@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IBG - Igreja Batista Graça - Versão.202610231952</title>
+    <title>IBG - Igreja Batista Graça - Versão.202610232256</title>
     
     <style>
         * {
@@ -455,7 +455,7 @@
       }
       .eks-prefix .hero-slider {
         width: min(96%, 1100px);
-        margin: 12px auto 30px;
+        margin: 12px auto 16px;
         border-radius: 16px;
         border-color: var(--ibg-line);
         box-shadow: 0 14px 38px rgba(0,0,0,.24);
@@ -471,7 +471,7 @@
         padding: 0 12px;
         text-shadow: none;
       }
-      .eks-events { padding: 20px 0 40px; }
+      .eks-events { padding: 20px 0 12px; }
       .eks-events-wrap {
         width: min(94%, 1100px);
         margin: 12px auto 0;
@@ -496,7 +496,7 @@
       .eks-prefix .pill-button-icon { width: 60px; height: 60px; border-radius: 17px; font-size: 24px; }
       .eks-prefix .buttons-nav { gap: 10px; }
       .eks-prefix .buttons-nav-arrow { width: 32px; height: 30px; border-radius: 9px; font-size: 23px; }
-      .eks-prefix .yt-section { padding: 0px 14px 10px; }
+      .eks-prefix .yt-section { padding: 22px 14px 10px; }
       .eks-prefix .yt-header { margin-bottom: 8px; }
       .eks-prefix .yt-channel-btn { padding: 9px 13px; font-size: 12px; }
       .eks-prefix .yt-slider { grid-auto-columns: minmax(210px, 1fr); gap: 10px; padding: 7px 3px 10px; }
@@ -507,7 +507,7 @@
       .eks-prefix .yt-date { font-size: 11px; }
       .eks-prefix .yt-play span { width: 42px; height: 42px; font-size: 15px; }
       .eks-prefix .horarios-section,
-      .eks-prefix .contribuir-section { padding: 0px 14px 30px; }
+      .eks-prefix .contribuir-section { padding: 24px 14px 30px; }
       .eks-prefix .glass-card {
         max-width: 700px;
         padding: 22px 26px;
@@ -543,8 +543,8 @@
       @media (max-width: 600px) {
         .eks-prefix .hero-slider { width: calc(100% - 20px); margin: 10px auto 14px; border-radius: 12px; }
         .eks-prefix .band-title { font-size: 20px; }
-        .eks-events { padding: 16px 0 30px; }
-        .eks-events-wrap { width: calc(100% - 20px); padding: 5px 12px; margin-top: 0px; }
+        .eks-events { padding: 16px 0 8px; }
+        .eks-events-wrap { width: calc(100% - 20px); padding: 5px 12px; margin-top: 9px; }
         .eks-events-grid { grid-template-columns: 1fr; }
         .eks-event-info { grid-template-columns: 76px 1px minmax(0,1fr); column-gap: 8px; }
         .eks-event-name { font-size: 14px; }
@@ -609,6 +609,73 @@
       }
     </style>
 
+
+    <style id="ibg-events-enhancements">
+        .eks-prefix .eks-event--today {
+            background: linear-gradient(90deg, rgba(194, 211, 106, .13), rgba(194, 211, 106, .045));
+            border: 1px solid rgba(194, 211, 106, .28);
+            border-radius: 12px;
+            padding-left: 12px;
+            padding-right: 12px;
+            box-shadow: inset 3px 0 0 rgba(194, 211, 106, .8);
+        }
+        .eks-prefix .eks-event--today .eks-event-date-line strong { color: #E4EEA3; }
+        .eks-prefix .events-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: fit-content;
+            max-width: 100%;
+            margin: 16px auto 2px;
+            padding: 10px 18px;
+            border: 1px solid rgba(194, 211, 106, .38);
+            border-radius: 999px;
+            background: rgba(194, 211, 106, .09);
+            color: #DCE99A;
+            font: inherit;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background .2s ease, border-color .2s ease;
+        }
+        .eks-prefix .events-toggle:hover { background: rgba(194, 211, 106, .16); border-color: rgba(194, 211, 106, .62); }
+        .eks-prefix .events-toggle[hidden] { display: none !important; }
+        .eks-prefix .events-toggle-arrow { font-size: 21px; line-height: .8; }
+        @media (max-width: 600px) {
+            .eks-prefix .eks-event--today { padding-left: 9px; padding-right: 9px; }
+            .eks-prefix .events-toggle { margin-top: 12px; padding: 9px 15px; }
+        }
+    </style>
+
+
+    <style id="ibg-section-spacing-final">
+      /* Títulos próximos do conteúdo; respiro entre uma seção e a próxima */
+      .eks-prefix > section { margin-bottom: 30px; }
+      .eks-prefix > .hero-slider { margin-bottom: 28px; }
+      .eks-prefix .section-divider,
+      .eks-prefix .section-divider--title { padding-bottom: 4px; }
+      .eks-prefix .eks-events { padding-top: 4px; padding-bottom: 26px; margin-bottom: 28px; }
+      .eks-prefix .eks-events-wrap { margin-top: 6px; }
+      .eks-prefix .inscricoes-section { padding-top: 2px; padding-bottom: 8px; }
+      .eks-prefix .yt-section { padding-top: 4px; padding-bottom: 12px; }
+      .eks-prefix .horarios-section,
+      .eks-prefix .contribuir-section { padding-top: 4px; padding-bottom: 16px; }
+      .eks-prefix .fotos-section { padding-top: 4px; padding-bottom: 16px; }
+      @media (max-width: 600px) {
+        .eks-prefix > section { margin-bottom: 24px; }
+        .eks-prefix > .hero-slider { margin-bottom: 22px; }
+        .eks-prefix .section-divider,
+        .eks-prefix .section-divider--title { padding-bottom: 3px; }
+        .eks-prefix .eks-events { padding-top: 3px; padding-bottom: 20px; margin-bottom: 22px; }
+        .eks-prefix .eks-events-wrap { margin-top: 5px; }
+        .eks-prefix .yt-section,
+        .eks-prefix .horarios-section,
+        .eks-prefix .contribuir-section,
+        .eks-prefix .fotos-section { padding-top: 3px; padding-bottom: 12px; }
+      }
+    </style>
+
 </head>
 <body>
 
@@ -623,7 +690,7 @@
 
         <!-- OUTRAS INSCRIÇÕES: logo após o slider -->
         <section class="inscricoes-area">
-            <div class="section-divider"><h2 class="band-title">Acesso Rápido</h2></div>
+            <div class="section-divider"><h2 class="band-title">Outras Inscrições</h2></div>
             <section class="inscricoes-section">
                 <div class="buttons-container" id="teste-links" aria-label="Outras inscrições"></div>
                 <div class="buttons-nav" aria-label="Navegação das inscrições">
@@ -638,6 +705,10 @@
             <div class="section-divider"><h2 class="band-title">Próximos Eventos</h2></div>
             <div class="eks-events-wrap">
                 <div class="eks-events-grid" id="eventos-container"></div>
+                <button class="events-toggle" id="eventos-toggle" type="button" aria-expanded="false" hidden>
+                    <span class="events-toggle-label">Ver todos os eventos</span>
+                    <span class="events-toggle-arrow" aria-hidden="true">⌄</span>
+                </button>
             </div>
         </section>
 
@@ -832,18 +903,82 @@ function aplicarAtributosLink(elementoA, url) {
         (function(){
             const API_EVENTOS = "https://script.google.com/macros/s/AKfycbz2n11oFReKnDF_HsSOzaoJ4_W7EdGG62RiQl-y65YSMkTEIpRFnyZxat4zGn0wj5rA/exec?tipo=eventos";
             const container = document.getElementById("eventos-container");
+            const toggle = document.getElementById("eventos-toggle");
             if(!container) return;
 
-            function formatarData(data){
-                if(!data) return "";
+            const LIMITE_EVENTOS = 8;
+            let todosOsEventos = [];
+            let expandido = false;
+
+            function obterDataLocal(data){
+                if(!data) return null;
                 const val = String(data).trim();
-                if(val.includes("T")){
-                    const d = new Date(val);
-                    if(!isNaN(d.getTime())){
-                        return `${String(d.getDate()).padStart(2, "0")}/${String(d.getMonth() + 1).padStart(2, "0")}`;
-                    }
+                // Trata datas ISO como data de calendário, sem conversão de fuso horário.
+                let m = val.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+                if(m) return { ano:Number(m[1]), mes:Number(m[2]), dia:Number(m[3]) };
+                // Também aceita datas no formato dd/mm/aaaa ou dd-mm-aaaa.
+                m = val.match(/^(\d{1,2})[\/-](\d{1,2})[\/-](\d{4})/);
+                if(m) return { dia:Number(m[1]), mes:Number(m[2]), ano:Number(m[3]) };
+                // Fallback para formatos de data reconhecidos pelo navegador.
+                const d = new Date(val);
+                if(!isNaN(d.getTime())) return { ano:d.getFullYear(), mes:d.getMonth()+1, dia:d.getDate() };
+                return null;
+            }
+
+            function formatarData(data){
+                const partes = obterDataLocal(data);
+                if(partes) return `${String(partes.dia).padStart(2, "0")}/${String(partes.mes).padStart(2, "0")}`;
+                return data ? String(data).trim() : "";
+            }
+
+            function ehHoje(data){
+                const partes = obterDataLocal(data);
+                if(!partes) return false;
+                const agora = new Date();
+                return partes.ano === agora.getFullYear() && partes.mes === agora.getMonth()+1 && partes.dia === agora.getDate();
+            }
+
+            function renderizarEventos(){
+                container.innerHTML = "";
+                const eventosVisiveis = expandido
+                    ? todosOsEventos
+                    : todosOsEventos.filter((evento, indice) => indice < LIMITE_EVENTOS || evento.temInscricao);
+
+                eventosVisiveis.forEach(evento => {
+                    const article = document.createElement("article");
+                    article.className = "eks-event" + (evento.hoje ? " eks-event--today" : "");
+                    if(evento.hoje) article.setAttribute("aria-label", "Evento de hoje");
+                    const btnHtml = evento.temInscricao
+                        ? `<a class="eks-event-button" href="${esc(tratarUrl(evento.linkRaw))}">Inscreva-se</a>`
+                        : "";
+                    article.innerHTML = `
+                        <div class="eks-event-info">
+                            <div class="eks-event-date">
+                                <div class="eks-event-date-line"><span class="eks-event-icon">📅</span><strong>${esc(evento.dataFormatada)}</strong></div>
+                                <div class="eks-event-date-line"><span class="eks-event-icon">⏰</span><span>${esc(evento.hora)}</span></div>
+                            </div>
+                            <div class="eks-event-divider"></div>
+                            <div class="eks-event-name">${esc(evento.nome)}${btnHtml ? "<br>" + btnHtml : ""}</div>
+                        </div>`;
+                    container.appendChild(article);
+                });
+
+                if(toggle){
+                    const precisaControle = todosOsEventos.length > LIMITE_EVENTOS;
+                    toggle.hidden = !precisaControle;
+                    toggle.setAttribute("aria-expanded", expandido ? "true" : "false");
+                    const label = toggle.querySelector(".events-toggle-label");
+                    const arrow = toggle.querySelector(".events-toggle-arrow");
+                    if(label) label.textContent = expandido ? "Mostrar menos eventos" : "Ver todos os eventos";
+                    if(arrow) arrow.textContent = expandido ? "⌃" : "⌄";
                 }
-                return val;
+            }
+
+            if(toggle){
+                toggle.addEventListener("click", () => {
+                    expandido = !expandido;
+                    renderizarEventos();
+                });
             }
 
             fetch(API_EVENTOS)
@@ -852,39 +987,30 @@ function aplicarAtributosLink(elementoA, url) {
                     const eventosSite = (eventos || []).filter(e => String(e.app || "").trim().toUpperCase() === "SIM");
                     if(!eventosSite.length){
                         container.innerHTML = `<div class="eks-events-empty">Nenhum evento disponível no momento.</div>`;
+                        if(toggle) toggle.hidden = true;
                         return;
                     }
 
-                    container.innerHTML = "";
-                    eventosSite.forEach(evento => {
-                        const data = formatarData(evento.data);
-                        const hora = String(evento.hora || "").trim();
-                        const nome = String(evento.nome || "").trim();
+                    todosOsEventos = eventosSite.map(evento => {
                         const linkRaw = String(evento.link || "").trim();
                         const botao = String(evento["botão"] || evento.botao || "").trim().toUpperCase();
-                        const mostrarBotao = (botao === "SIM" && linkRaw !== "");
-
-                        const article = document.createElement("article");
-                        article.className = "eks-event";
-
-                        let btnHtml = "";
-                        if(mostrarBotao) {
-                            btnHtml = `<a class="eks-event-button" href="${esc(tratarUrl(linkRaw))}">Inscreva-se</a>`;
-                        }
-
-                        article.innerHTML = `
-                            <div class="eks-event-info">
-                                <div class="eks-event-date">
-                                    <div class="eks-event-date-line"><span class="eks-event-icon">📅</span><strong>${esc(data)}</strong></div>
-                                    <div class="eks-event-date-line"><span class="eks-event-icon">⏰</span><span>${esc(hora)}</span></div>
-                                </div>
-                                <div class="eks-event-divider"></div>
-                                <div class="eks-event-name">${esc(nome)}<br>${btnHtml}</div>
-                            </div>`;
-                        container.appendChild(article);
+                        const temInscricao = botao === "SIM" && linkRaw !== "";
+                        return {
+                            dataFormatada: formatarData(evento.data),
+                            hora: String(evento.hora || "").trim(),
+                            nome: String(evento.nome || "").trim(),
+                            linkRaw,
+                            temInscricao,
+                            hoje: ehHoje(evento.data)
+                        };
                     });
+                    renderizarEventos();
                 })
-                .catch(err => { container.innerHTML = `<div class="eks-events-error">Não foi possível carregar os próximos eventos.</div>`; });
+                .catch(err => {
+                    console.error(err);
+                    container.innerHTML = `<div class="eks-events-error">Não foi possível carregar os próximos eventos.</div>`;
+                    if(toggle) toggle.hidden = true;
+                });
         })();
 
         /* BOTÕES/INSCRIÇÕES API */
@@ -936,7 +1062,7 @@ function aplicarAtributosLink(elementoA, url) {
                     } else {
                         container.scrollBy({ left: passoInscricoes(), behavior: "smooth" });
                     }
-                }, 1500);
+                }, 3400);
             };
 
             if(prevButton) prevButton.addEventListener("click", () => { pausarAutoScroll(); moverInscricoes(-1); });
