@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IBG - Igreja Batista Graça - Versão.202610232256</title>
+    <title>IBG - Igreja Batista Graça - Versão.202610232319</title>
     
     <style>
         * {
@@ -676,6 +676,52 @@
       }
     </style>
 
+
+    <style id="ibg-schedule-pix-cards">
+      /* Horários: cards compactos e alinhados */
+      .eks-prefix .schedule-wrapper--updated { display:grid; grid-template-columns:minmax(0,1fr); gap:22px; width:100%; }
+      .eks-prefix .schedule-wrapper--updated .schedule-block { min-width:0; }
+      .eks-prefix .schedule-wrapper--updated .schedule-block h3 { margin-bottom:12px; }
+      .eks-prefix .sunday-cards { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; }
+      .eks-prefix .schedule-info-card, .eks-prefix .ministry-card {
+        min-width:0; display:flex; flex-direction:column; justify-content:space-between; gap:12px;
+        padding:16px 14px; min-height:112px; border-radius:15px;
+        background:linear-gradient(145deg,rgba(194,211,106,.10),rgba(17,31,51,.92) 65%);
+        border:1px solid rgba(194,211,106,.23); text-align:center;
+      }
+      .eks-prefix .schedule-card-title { color:var(--text-primary); font-size:14px; line-height:1.35; font-weight:700; }
+      .eks-prefix .schedule-card-time { color:#C2D36A; font-size:19px; line-height:1; }
+      .eks-prefix .ministry-carousel { overflow:hidden; width:100%; border-radius:15px; }
+      .eks-prefix .ministry-track { display:flex; gap:10px; transition:transform .55s ease; will-change:transform; }
+      .eks-prefix .ministry-card { flex:0 0 calc((100% - 20px) / 3); min-height:126px; }
+      .eks-prefix .ministry-card strong { font-size:14px; color:var(--text-primary); line-height:1.3; }
+      .eks-prefix .ministry-card span { color:var(--text-secondary); font-size:12px; line-height:1.3; }
+      .eks-prefix .ministry-card b { color:#C2D36A; font-size:18px; }
+      .eks-prefix .ministry-dots { display:flex; justify-content:center; gap:6px; margin-top:10px; }
+      .eks-prefix .ministry-dot { width:6px; height:6px; padding:0; border:0; border-radius:99px; background:rgba(181,193,209,.35); }
+      .eks-prefix .ministry-dot.is-active { width:18px; background:#C2D36A; }
+      .eks-prefix .banking-details--cards { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; width:100%; }
+      .eks-prefix .pix-copy-card { appearance:none; display:flex; flex-direction:column; align-items:flex-start; gap:10px; min-width:0; padding:18px; border-radius:15px; text-align:left; cursor:pointer; color:var(--text-primary); background:linear-gradient(145deg,rgba(194,211,106,.10),rgba(17,31,51,.92) 65%); border:1px solid rgba(194,211,106,.23); font:inherit; transition:background .2s ease,border-color .2s ease,transform .2s ease; }
+      .eks-prefix .pix-copy-card:hover { border-color:rgba(194,211,106,.65); background:rgba(194,211,106,.12); }
+      .eks-prefix .pix-copy-card:active { transform:scale(.985); }
+      .eks-prefix .pix-card-label { font-size:11px; font-weight:800; letter-spacing:.1em; color:#C2D36A; text-transform:uppercase; }
+      .eks-prefix .pix-copy-card strong { font-size:clamp(12px,1.7vw,15px); overflow-wrap:anywhere; }
+      .eks-prefix .pix-card-hint { font-size:11px; color:var(--text-secondary); }
+      .eks-prefix .pix-copy-status { grid-column:1/-1; min-height:16px; margin:0; font-size:12px; color:#C2D36A; text-align:center; }
+      @media (min-width:769px) { .eks-prefix .schedule-wrapper--updated { grid-template-columns:1fr; } }
+      @media (max-width:600px) {
+        .eks-prefix .sunday-cards { gap:7px; }
+        .eks-prefix .schedule-info-card { padding:12px 8px; min-height:110px; gap:8px; }
+        .eks-prefix .schedule-card-title { font-size:12px; }
+        .eks-prefix .schedule-card-time { font-size:17px; }
+        .eks-prefix .ministry-card { flex-basis:calc((100% - 10px) / 2); padding:14px 10px; }
+        .eks-prefix .banking-details--cards { gap:8px; }
+        .eks-prefix .pix-copy-card { padding:13px 11px; gap:8px; }
+        .eks-prefix .pix-copy-card strong { font-size:12px; }
+      }
+      @media (prefers-reduced-motion:reduce) { .eks-prefix .ministry-track { transition:none; } }
+    </style>
+
 </head>
 <body>
 
@@ -735,24 +781,28 @@
             <div class="section-divider section-divider--title"><h2 class="band-title">Horários</h2></div>
             <section class="horarios-section">
                 <div class="glass-card">
-                    <div class="schedule-wrapper">
-                        <div class="schedule-block">
-                            <h3>Celebrações Domingos</h3>
-                            <ul class="schedule-list">
-                                <li class="schedule-item"><span class="bullet"></span><span><strong>🌞 MANHÃ ❱</strong> ⏰ 10h30</span></li>
-                                <li class="schedule-item"><span class="bullet"></span><span><strong>🌙 NOITE ❱</strong> ⏰ 18h</span></li>
-                            </ul>
+                    <div class="schedule-wrapper schedule-wrapper--updated">
+                        <div class="schedule-block sunday-block">
+                            <h3>DOMINGO</h3>
+                            <div class="sunday-cards">
+                                <div class="schedule-info-card"><span class="schedule-card-title">CFC - Centro de Formação Cristã</span><strong class="schedule-card-time">9h</strong></div>
+                                <div class="schedule-info-card"><span class="schedule-card-title">Celebração - Manhã</span><strong class="schedule-card-time">10h30</strong></div>
+                                <div class="schedule-info-card"><span class="schedule-card-title">Celebração - Noite</span><strong class="schedule-card-time">18h</strong></div>
+                            </div>
                         </div>
-                        <div class="schedule-block">
+                        <div class="schedule-block ministries-block">
                             <h3>Ministérios</h3>
-                            <ul class="schedule-list">
-                                <li class="schedule-item"><span class="bullet"></span><span><strong>MULHERES ❱ </strong> 🗓️ 1ª terça - ⏰ 20h</span></li>
-                                <li class="schedule-item"><span class="bullet"></span><span><strong>HOMENS ❱</strong> 🗓️ 3ª terça - ⏰ 20h</span></li>
-                                <li class="schedule-item"><span class="bullet"></span><span><strong>ADOLESCENTES ❱</strong> 🗓️ 4ª terça - ⏰ 20h</span></li>
-                                <li class="schedule-item"><span class="bullet"></span><span><strong>JOVENS ❱</strong> 🗓️ 2ª sexta - ⏰ 20h</span></li>
-                                <li class="schedule-item"><span class="bullet"></span><span><strong>60+ ❱</strong> 🗓️ 4º sábado - ⏰ 15h</span></li>
-                                <li class="schedule-item"><span class="bullet"></span><span><strong>EMPREENDEDORES ❱</strong> 🗓️ 2ª terça - ⏰ 20h</span></li>
-                            </ul>
+                            <div class="ministry-carousel" id="ministryCarousel" aria-label="Horários dos ministérios">
+                                <div class="ministry-track" id="ministryTrack">
+                                    <div class="ministry-card"><strong>Mulheres</strong><span>1ª terça-feira</span><b>20h</b></div>
+                                    <div class="ministry-card"><strong>Homens</strong><span>3ª terça-feira</span><b>20h</b></div>
+                                    <div class="ministry-card"><strong>Adolescentes</strong><span>4ª terça-feira</span><b>20h</b></div>
+                                    <div class="ministry-card"><strong>Jovens</strong><span>2ª sexta-feira</span><b>20h</b></div>
+                                    <div class="ministry-card"><strong>60+</strong><span>4º sábado</span><b>15h</b></div>
+                                    <div class="ministry-card"><strong>Empreendedores</strong><span>2ª terça-feira</span><b>20h</b></div>
+                                </div>
+                            </div>
+                            <div class="ministry-dots" id="ministryDots" aria-hidden="true"></div>
                         </div>
                     </div>
                 </div>
@@ -764,14 +814,18 @@
             <div class="section-divider section-divider--title"><h2 class="band-title">Contribua</h2></div>
             <section class="contribuir-section">
                 <div class="glass-card">
-                    <div class="banking-details">
-                        <div class="bank-item">
-                            <h4>Chaves Pix</h4>
-                            <ul class="schedule-list">
-                                <li class="schedule-item"><span class="bullet"></span><span class="highlight">CNPJ:</span> 62.742.952/0001-38</li>
-                                <li class="schedule-item"><span class="bullet"></span><span class="highlight">E-mail:</span> administracao@ibg.org.br</li>
-                            </ul>
-                        </div>
+                    <div class="banking-details banking-details--cards">
+                        <button class="pix-copy-card" type="button" data-copy="62.742.952/0001-38">
+                            <span class="pix-card-label">CNPJ</span>
+                            <strong>62.742.952/0001-38</strong>
+                            <span class="pix-card-hint"><span aria-hidden="true">⧉</span> Toque para copiar</span>
+                        </button>
+                        <button class="pix-copy-card" type="button" data-copy="administracao@ibg.org.br">
+                            <span class="pix-card-label">E-mail</span>
+                            <strong>administracao@ibg.org.br</strong>
+                            <span class="pix-card-hint"><span aria-hidden="true">⧉</span> Toque para copiar</span>
+                        </button>
+                        <p class="pix-copy-status" id="pixCopyStatus" role="status" aria-live="polite"></p>
                     </div>
                 </div>
             </section>
@@ -1437,5 +1491,64 @@ carregarVideosYouTube();
     window.top.location.href = url;
 }
     </script>
+
+<script id="ibg-schedule-pix-behavior">
+(function(){
+  const track = document.getElementById('ministryTrack');
+  const carousel = document.getElementById('ministryCarousel');
+  const dotsContainer = document.getElementById('ministryDots');
+  if (track && carousel && dotsContainer) {
+    const cards = Array.from(track.querySelectorAll('.ministry-card'));
+    let index = 0;
+    let timer = null;
+    const visibleCount = () => window.matchMedia('(max-width: 600px)').matches ? 2 : 3;
+    const maxIndex = () => Math.max(0, cards.length - visibleCount());
+    function renderDots(){
+      dotsContainer.innerHTML = '';
+      for(let i=0; i<=maxIndex(); i++){
+        const dot=document.createElement('span');
+        dot.className='ministry-dot'+(i===index?' is-active':'');
+        dotsContainer.appendChild(dot);
+      }
+    }
+    function moveTo(next){
+      index = next > maxIndex() ? 0 : (next < 0 ? maxIndex() : next);
+      const card = cards[0];
+      if(!card) return;
+      const gap = parseFloat(getComputedStyle(track).gap) || 10;
+      const step = card.getBoundingClientRect().width + gap;
+      track.style.transform = `translateX(${-index * step}px)`;
+      renderDots();
+    }
+    function restart(){ if(timer) clearInterval(timer); timer=setInterval(()=>moveTo(index+1),1500); }
+    renderDots();
+    timer=setInterval(()=>moveTo(index+1),1500);
+    window.addEventListener('resize',()=>{ index=Math.min(index,maxIndex()); moveTo(index); restart(); });
+    carousel.addEventListener('mouseenter',()=>{ if(timer) clearInterval(timer); });
+    carousel.addEventListener('mouseleave',restart);
+    carousel.addEventListener('touchstart',()=>{ if(timer) clearInterval(timer); },{passive:true});
+    carousel.addEventListener('touchend',restart,{passive:true});
+  }
+
+  const status = document.getElementById('pixCopyStatus');
+  document.querySelectorAll('.pix-copy-card').forEach(button=>{
+    button.addEventListener('click',async()=>{
+      const textToCopy = button.getAttribute('data-copy') || '';
+      try {
+        if(navigator.clipboard && window.isSecureContext) await navigator.clipboard.writeText(textToCopy);
+        else {
+          const area=document.createElement('textarea'); area.value=textToCopy; area.setAttribute('readonly','');
+          area.style.position='fixed'; area.style.opacity='0'; document.body.appendChild(area); area.select();
+          const ok=document.execCommand('copy'); area.remove(); if(!ok) throw new Error('copy failed');
+        }
+        if(status) status.textContent='Texto copiado!';
+      } catch(e) {
+        if(status) status.textContent='Não foi possível copiar automaticamente. Selecione e copie: '+textToCopy;
+      }
+    });
+  });
+})();
+</script>
+
 </body>
 </html>
