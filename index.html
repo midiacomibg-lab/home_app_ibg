@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IBG - Igreja Batista Graça - Versão.202610232334</title>
+    <title>IBG - Igreja Batista Graça - Versão.202610241749</title>
     
     <style>
         * {
@@ -893,6 +893,37 @@ function aplicarAtributosLink(elementoA, url) {
         // Configuração dos links estáticos
         aplicarAtributosLink(document.getElementById("btn-yt-channel"), "https://www.youtube.com/@IBGOFICIAL"); 
 
+        /* CACHE LOCAL: mostra os últimos dados salvos e atualiza em segundo plano. */
+        const IBG_CACHE_TTL = 7 * 24 * 60 * 60 * 1000; // mantém cópia por até 7 dias
+        function carregarComCache(chave, url, aoReceber, aoFalharSemCache) {
+            let tinhaCache = false;
+            try {
+                const salvo = localStorage.getItem("ibg_cache_v1_" + chave);
+                if (salvo) {
+                    const pacote = JSON.parse(salvo);
+                    if (pacote && Array.isArray(pacote.dados)) {
+                        tinhaCache = true;
+                        aoReceber(pacote.dados, true);
+                    }
+                }
+            } catch (e) { console.warn("Não foi possível ler o cache IBG:", chave, e); }
+
+            // Não aguarda o cache para consultar a fonte; a tela já pode estar visível.
+            fetch(url, { cache: "no-store" })
+                .then(res => res.ok ? res.json() : Promise.reject(new Error("HTTP " + res.status)))
+                .then(dados => {
+                    if (!Array.isArray(dados)) throw new Error("Resposta inválida para " + chave);
+                    try {
+                        localStorage.setItem("ibg_cache_v1_" + chave, JSON.stringify({ salvoEm: Date.now(), dados }));
+                    } catch (e) { console.warn("Não foi possível gravar o cache IBG:", chave, e); }
+                    aoReceber(dados, false);
+                })
+                .catch(erro => {
+                    console.warn("Falha ao atualizar dados IBG:", chave, erro);
+                    if (!tinhaCache && aoFalharSemCache) aoFalharSemCache(erro);
+                });
+        }
+
         /* SLIDER API */
         (function(){
             const API = "https://script.google.com/macros/s/AKfycbz2n11oFReKnDF_HsSOzaoJ4_W7EdGG62RiQl-y65YSMkTEIpRFnyZxat4zGn0wj5rA/exec?tipo=slider";
@@ -902,9 +933,7 @@ function aplicarAtributosLink(elementoA, url) {
 
             if(!slidesWrap) return;
 
-            fetch(API)
-                .then(res => res.ok ? res.json() : Promise.reject("HTTP " + res.status))
-                .then(slidesData => {
+            carregarComCache("slider", API, slidesData => {
                     const slides = (slidesData || [])
                         .filter(s => String(s.app || "").trim().toUpperCase() === "SIM")
                         .filter(s => s["url da imagem"] && String(s["url da imagem"]).trim() !== "")
@@ -949,8 +978,7 @@ function aplicarAtributosLink(elementoA, url) {
                     if(renderedSlides.length > 1){
                         setInterval(() => setActive((current + 1) % renderedSlides.length), 3000);
                     }
-                })
-                .catch(err => { if(loading) loading.textContent = "Não foi possível carregar os destaques."; });
+                }, () => { if(loading) loading.textContent = "Não foi possível carregar os destaques."; });
         })();
 
         /* EVENTOS API */
@@ -1035,9 +1063,7 @@ function aplicarAtributosLink(elementoA, url) {
                 });
             }
 
-            fetch(API_EVENTOS)
-                .then(res => res.ok ? res.json() : Promise.reject("HTTP " + res.status))
-                .then(eventos => {
+            carregarComCache("eventos", API_EVENTOS, eventos => {
                     const eventosSite = (eventos || []).filter(e => String(e.app || "").trim().toUpperCase() === "SIM");
                     if(!eventosSite.length){
                         container.innerHTML = `<div class="eks-events-empty">Nenhum evento disponível no momento.</div>`;
@@ -1059,9 +1085,7 @@ function aplicarAtributosLink(elementoA, url) {
                         };
                     });
                     renderizarEventos();
-                })
-                .catch(err => {
-                    console.error(err);
+                }, () => {
                     container.innerHTML = `<div class="eks-events-error">Não foi possível carregar os próximos eventos.</div>`;
                     if(toggle) toggle.hidden = true;
                 });
@@ -1126,9 +1150,8 @@ function aplicarAtributosLink(elementoA, url) {
             container.addEventListener("scroll", atualizarSetas, { passive: true });
             window.addEventListener("resize", atualizarSetas);
 
-            fetch(API_LINKS)
-                .then(res => res.ok ? res.json() : Promise.reject("HTTP " + res.status))
-                .then(links => {
+            function renderizarInscricoes(links) {
+                    container.innerHTML = "";
                     (links || [])
                         .filter(link => String(link.app || "").trim().toUpperCase() === "SIM")
                         .sort((a,b) => Number(a.ordem || 9999) - Number(b.ordem || 9999))
@@ -1155,11 +1178,8 @@ function aplicarAtributosLink(elementoA, url) {
                         });
                     atualizarSetas();
                     requestAnimationFrame(() => { atualizarSetas(); iniciarAutoScroll(); });
-                })
-                .catch(err => {
-                    console.error(err);
-                    atualizarSetas();
-                });
+            }
+            carregarComCache("inscricoes", API_LINKS, renderizarInscricoes, () => atualizarSetas());
         })();
 
 /* ARQUIVO DE FOTOS — dados fornecidos pelo Google Apps Script (?tipo=fotos) */
@@ -1317,139 +1337,44 @@ if (btnYtChannel) {
 
 /* CARREGAR VÍDEOS */
 
-async function carregarVideosYouTube() {
-
-  try {
-
-    if (ytStatus) {
-      ytStatus.textContent = "Carregando vídeos...";
-    }
-
-    const resposta = await fetch(`${YT_SCRIPT_URL}?tipo=youtube`);
-
-    if (!resposta.ok) {
-      throw new Error(`Erro HTTP ${resposta.status}`);
-    }
-
-    const videos = await resposta.json();
-
-    if (!Array.isArray(videos)) {
-      throw new Error(
-        videos.erro || "Resposta inválida do servidor"
-      );
-    }
-
-    if (videos.length === 0) {
-
-      if (ytStatus) {
-        ytStatus.textContent = "Nenhum vídeo encontrado.";
-      }
-
-      return;
-    }
-
-
-    /* LIMPA O SLIDER */
-
-    if (ytSlider) {
-      ytSlider.innerHTML = "";
-    }
-
-
-    /* CRIA OS CARDS */
-
-    videos.slice(0, MAX_VIDEOS).forEach(video => {
-
-      const videoId = video.id;
-
-      if (!videoId) return;
-
-
-      const card = document.createElement("div");
-
-      card.className = "yt-card";
-
-
-      const data = new Date(video.date);
-
-      const dataFormatada =
-        !isNaN(data.getTime())
-          ? data.toLocaleDateString("pt-BR", {
-              day: "2-digit",
-              month: "2-digit",
-              year: "numeric"
-            })
-          : "";
-
-
-      card.innerHTML = `
-        <img
-          class="yt-thumb"
-          src="${video.thumb}"
-          alt="${video.title || "Mensagem"}"
-          loading="lazy"
-        >
-
-        <div class="yt-play">
-          <span>▶</span>
-        </div>
-
-        <div class="yt-meta">
-
-          <h3 class="yt-name">
-            ${video.title || "Mensagem"}
-          </h3>
-
-          ${
-            dataFormatada
-              ? `<p class="yt-date">${dataFormatada}</p>`
-              : ""
-          }
-
-        </div>
-      `;
-
-
-      /* AO CLICAR, ABRE O YOUTUBE */
-
-      card.addEventListener("click", () => {
-
-        window.top.location.href =
-          `https://www.youtube.com/watch?v=${videoId}`;
-
-      });
-
-
-      if (ytSlider) {
-        ytSlider.appendChild(card);
-      }
-
-    });
-
-
-    /* REMOVE MENSAGEM DE CARREGAMENTO */
-
-    if (ytStatus) {
-      ytStatus.textContent = "";
-    }
-
-
-  } catch (erro) {
-
-    console.error(
-      "Erro ao carregar vídeos do YouTube:",
-      erro
-    );
-
-    if (ytStatus) {
-      ytStatus.textContent =
-        "Não foi possível carregar as mensagens.";
-    }
-
+function renderizarVideosYouTube(videos) {
+  if (!Array.isArray(videos)) return;
+  if (!videos.length) {
+    if (ytSlider) ytSlider.innerHTML = "";
+    if (ytStatus) ytStatus.textContent = "Nenhum vídeo encontrado.";
+    return;
   }
-
+  if (ytSlider) ytSlider.innerHTML = "";
+  videos.slice(0, MAX_VIDEOS).forEach(video => {
+    const videoId = video.id;
+    if (!videoId) return;
+    const card = document.createElement("div");
+    card.className = "yt-card";
+    const data = new Date(video.date);
+    const dataFormatada = !isNaN(data.getTime()) ? data.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric" }) : "";
+    const img = document.createElement("img");
+    img.className = "yt-thumb";
+    img.src = String(video.thumb || "");
+    img.alt = String(video.title || "Mensagem");
+    img.loading = "lazy";
+    card.appendChild(img);
+    const play = document.createElement("div"); play.className = "yt-play"; play.innerHTML = "<span>▶</span>"; card.appendChild(play);
+    const meta = document.createElement("div"); meta.className = "yt-meta";
+    const title = document.createElement("h3"); title.className = "yt-name"; title.textContent = video.title || "Mensagem"; meta.appendChild(title);
+    if (dataFormatada) { const date = document.createElement("p"); date.className = "yt-date"; date.textContent = dataFormatada; meta.appendChild(date); }
+    card.appendChild(meta);
+    card.addEventListener("click", () => { window.top.location.href = `https://www.youtube.com/watch?v=${encodeURIComponent(videoId)}`; });
+    if (ytSlider) ytSlider.appendChild(card);
+  });
+  if (ytStatus) ytStatus.textContent = "";
 }
 
+function carregarVideosYouTube() {
+  if (ytStatus && (!ytSlider || !ytSlider.children.length)) ytStatus.textContent = "Carregando vídeos...";
+  carregarComCache("youtube", `${YT_SCRIPT_URL}?tipo=youtube`, renderizarVideosYouTube, () => {
+    if (ytStatus && (!ytSlider || !ytSlider.children.length)) ytStatus.textContent = "Não foi possível carregar as mensagens.";
+  });
+}
 
 /* BOTÕES DE NAVEGAÇÃO */
 
