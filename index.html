@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IBG - Igreja Batista Graça - Versão.202611031439</title>
+    <title>IBG - Igreja Batista Graça - Versão.202611031830</title>
     
     <style>
         * {
@@ -883,7 +883,7 @@
                 const urlFinal = tratarUrl(url);
             
                 elementoA.href = urlFinal;
-                elementoA.target = "_blank";
+                elementoA.target = "_top";
                 elementoA.rel = "noopener noreferrer";
             }
 
@@ -1030,7 +1030,7 @@
                     const btnHtml = evento.temInscricao
                         ? `<a class="eks-event-button"
                              href="${esc(tratarUrl(evento.linkRaw))}"
-                             target="_blank"
+                             target="_top"
                              rel="noopener noreferrer">Inscreva-se</a>`
                         : "";
                     article.innerHTML = `
