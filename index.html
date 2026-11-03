@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IBG - Igreja Batista Graça - Versão.202611031425</title>
+    <title>IBG - Igreja Batista Graça - Versão.202611031431</title>
     
     <style>
         * {
@@ -1028,7 +1028,10 @@
                     article.className = "eks-event" + (evento.hoje ? " eks-event--today" : "");
                     if(evento.hoje) article.setAttribute("aria-label", "Evento de hoje");
                     const btnHtml = evento.temInscricao
-                        ? `<a class="eks-event-button" href="${esc(tratarUrl(evento.linkRaw))}">Inscreva-se</a>`
+                        ? `<a class="eks-event-button"
+                             href="${esc(tratarUrl(evento.linkRaw))}"
+                             target="_blank"
+                             rel="noopener noreferrer">Inscreva-se</a>`
                         : "";
                     article.innerHTML = `
                         <div class="eks-event-info">
