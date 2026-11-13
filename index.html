@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IBG - Igreja Batista Graça - Versão.202611031830</title>
+    <title>IBG - Igreja Batista Graça - Versão.202611122110</title>
     
     <style>
         * {
@@ -722,6 +722,97 @@
       @media (prefers-reduced-motion:reduce) { .eks-prefix .ministry-track { transition:none; } }
     </style>
 
+
+<style id="ibg-event-details-and-slider-motion">
+  /* Slider com transição lateral */
+  .eks-prefix .hero-slides { overflow: hidden; }
+  .eks-prefix .hero-slide {
+    opacity: 1;
+    visibility: hidden;
+    transform: translateX(100%);
+    transition: transform .55s cubic-bezier(.22,.7,.25,1);
+    z-index: 1;
+  }
+  .eks-prefix .hero-slide.is-active {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(0);
+    z-index: 2;
+  }
+  .eks-prefix .hero-slide.is-entering,
+  .eks-prefix .hero-slide.is-leaving { visibility: visible; }
+  .eks-prefix .hero-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 48px;
+    padding: 0;
+    border: 1px solid rgba(255,255,255,.20);
+    border-radius: 12px;
+    background: rgba(5,13,23,.34);
+    color: rgba(255,255,255,.88);
+    font: 300 34px/1 Arial, sans-serif;
+    cursor: pointer;
+    opacity: .72;
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+    transition: opacity .2s ease, background .2s ease;
+  }
+  .eks-prefix .hero-nav:hover,
+  .eks-prefix .hero-nav:focus-visible { opacity: .96; background: rgba(5,13,23,.58); }
+  .eks-prefix .hero-nav:focus-visible { outline: 2px solid var(--ibg-lime); outline-offset: 2px; }
+  .eks-prefix .hero-prev { left: 9px; }
+  .eks-prefix .hero-next { right: 9px; }
+  .eks-prefix .hero-nav[hidden] { display: none; }
+
+  /* Explicação opcional dos eventos */
+  .eks-event-title-row { display: flex; align-items: center; gap: 5px; min-width: 0; }
+  .eks-event-title { min-width: 0; overflow-wrap: anywhere; }
+  .eks-event-expand {
+    flex: 0 0 27px;
+    width: 27px;
+    height: 27px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(194,211,106,.28);
+    border-radius: 50%;
+    background: rgba(194,211,106,.08);
+    color: #C2D36A;
+    font: 700 18px/1 Arial, sans-serif;
+    cursor: pointer;
+  }
+  .eks-event-expand:focus-visible { outline: 2px solid #C2D36A; outline-offset: 2px; }
+  .eks-event-description {
+    margin-top: 8px;
+    padding: 9px 11px;
+    border-left: 2px solid rgba(194,211,106,.62);
+    border-radius: 0 8px 8px 0;
+    background: rgba(194,211,106,.055);
+    color: rgba(242,245,249,.86);
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 1.5;
+    white-space: pre-line;
+  }
+  .eks-event-description[hidden] { display: none; }
+  @media (max-width: 600px) {
+    .eks-prefix .hero-nav { width: 34px; height: 44px; font-size: 31px; border-radius: 10px; }
+    .eks-prefix .hero-prev { left: 6px; }
+    .eks-prefix .hero-next { right: 6px; }
+    .eks-event-expand { width: 29px; height: 29px; flex-basis: 29px; }
+    .eks-event-description { font-size: 12px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .eks-prefix .hero-slide { transition: none !important; }
+  }
+</style>
+
 </head>
 <body>
 
@@ -731,6 +822,8 @@
             <div class="hero-slides" id="heroSlides">
                 <div class="hero-loading" id="heroLoading">Carregando destaques...</div>
             </div>
+            <button class="hero-nav hero-prev" id="heroPrev" type="button" aria-label="Slide anterior">‹</button>
+            <button class="hero-nav hero-next" id="heroNext" type="button" aria-label="Próximo slide">›</button>
             <div class="hero-dots" id="heroDots" aria-hidden="true"></div>
         </section>
 
@@ -753,7 +846,7 @@
                 <div class="eks-events-grid" id="eventos-container"></div>
                 <button class="events-toggle" id="eventos-toggle" type="button" aria-expanded="false" hidden>
                     <span class="events-toggle-label">Ver todos os eventos</span>
-                    <span class="events-toggle-arrow" aria-hidden="true">⌄</span>
+                    <span class="events-toggle-arrow" aria-hidden="true">🔽</span>
                 </button>
             </div>
         </section>
@@ -946,35 +1039,69 @@
                         const a = document.createElement("a");
                         a.className = `hero-slide ${index === 0 ? "is-active" : ""}`;
                         aplicarAtributosLink(a, slide.link);
-                        
                         const img = document.createElement("img");
                         img.src = esc(String(slide["url da imagem"]).trim());
                         img.alt = esc(slide.nome || "Destaque");
-                        
                         a.appendChild(img);
                         slidesWrap.appendChild(a);
                     });
 
                     dotsWrap.innerHTML = slides.map((_, index) => `
-                        <button class="hero-dot ${index === 0 ? "is-active" : ""}" type="button"></button>
+                        <button class="hero-dot ${index === 0 ? "is-active" : ""}" type="button" aria-label="Ir para o destaque ${index + 1}"></button>
                     `).join("");
-
                     if(loading) loading.remove();
 
                     const renderedSlides = Array.from(slidesWrap.querySelectorAll(".hero-slide"));
                     const dots = Array.from(dotsWrap.querySelectorAll(".hero-dot"));
+                    const prevButton = document.getElementById("heroPrev");
+                    const nextButton = document.getElementById("heroNext");
                     let current = 0;
+                    let animating = false;
 
-                    function setActive(index){
-                        renderedSlides.forEach((slide, i) => slide.classList.toggle("is-active", i === index));
+                    function setActive(index, direction){
+                        if(animating || index === current || index < 0 || index >= renderedSlides.length) return;
+                        animating = true;
+                        const previous = renderedSlides[current];
+                        const next = renderedSlides[index];
+                        const sign = direction || (index > current ? 1 : -1);
+                        next.classList.remove("is-active", "is-entering", "is-leaving");
+                        next.style.transform = `translateX(${sign * 100}%)`;
+                        next.style.visibility = "visible";
+                        next.style.zIndex = "3";
+                        void next.offsetWidth;
+                        next.classList.add("is-entering");
+                        next.style.transform = "translateX(0)";
+                        previous.classList.remove("is-active", "is-entering");
+                        previous.classList.add("is-leaving");
+                        previous.style.transform = `translateX(${-sign * 100}%)`;
+                        previous.style.zIndex = "2";
                         dots.forEach((dot, i) => dot.classList.toggle("is-active", i === index));
                         current = index;
+                        window.setTimeout(() => {
+                            previous.classList.remove("is-leaving");
+                            previous.style.visibility = "hidden";
+                            previous.style.transform = "";
+                            previous.style.zIndex = "";
+                            next.classList.remove("is-entering");
+                            next.classList.add("is-active");
+                            next.style.visibility = "";
+                            next.style.transform = "";
+                            next.style.zIndex = "";
+                            animating = false;
+                        }, 580);
+                    }
+                    dots.forEach((dot, index) => dot.addEventListener("click", () => setActive(index)));
+                    if(prevButton) prevButton.addEventListener("click", () => setActive((current - 1 + renderedSlides.length) % renderedSlides.length, -1));
+                    if(nextButton) nextButton.addEventListener("click", () => setActive((current + 1) % renderedSlides.length, 1));
+                    if(renderedSlides.length > 1){
+                        if(prevButton) prevButton.hidden = false;
+                        if(nextButton) nextButton.hidden = false;
+                        setInterval(() => setActive((current + 1) % renderedSlides.length, 1), 5000);
+                    } else {
+                        if(prevButton) prevButton.hidden = true;
+                        if(nextButton) nextButton.hidden = true;
                     }
 
-                    dots.forEach((dot, index) => dot.addEventListener("click", () => setActive(index)));
-                    if(renderedSlides.length > 1){
-                        setInterval(() => setActive((current + 1) % renderedSlides.length), 3000);
-                    }
                 }, () => { if(loading) loading.textContent = "Não foi possível carregar os destaques."; });
         })();
 
@@ -1040,8 +1167,28 @@
                                 <div class="eks-event-date-line"><span class="eks-event-icon">⏰</span><span>${esc(evento.hora)}</span></div>
                             </div>
                             <div class="eks-event-divider"></div>
-                            <div class="eks-event-name">${esc(evento.nome)}${btnHtml ? "<br>" + btnHtml : ""}</div>
+                            <div class="eks-event-name">
+                                <div class="eks-event-title-row">
+                                    <span class="eks-event-title"></span>
+                                    ${evento.explicacao ? '<button class="eks-event-expand" type="button" aria-expanded="false" aria-label="Mostrar explicação do evento">🔽</button>' : ''}
+                                </div>
+                                ${btnHtml ? "" + btnHtml : ""}
+                                ${evento.explicacao ? '<div class="eks-event-description" hidden></div>' : ''}
+                            </div>
                         </div>`;
+                    article.querySelector(".eks-event-title").textContent = evento.nome;
+                    if(evento.explicacao){
+                        const expandButton = article.querySelector(".eks-event-expand");
+                        const description = article.querySelector(".eks-event-description");
+                        description.textContent = evento.explicacao;
+                        expandButton.addEventListener("click", () => {
+                            const open = expandButton.getAttribute("aria-expanded") !== "true";
+                            expandButton.setAttribute("aria-expanded", String(open));
+                            expandButton.textContent = open ? "🔼" : "🔽";
+                            expandButton.setAttribute("aria-label", open ? "Ocultar explicação do evento" : "Mostrar explicação do evento");
+                            description.hidden = !open;
+                        });
+                    }
                     container.appendChild(article);
                 });
 
@@ -1052,7 +1199,7 @@
                     const label = toggle.querySelector(".events-toggle-label");
                     const arrow = toggle.querySelector(".events-toggle-arrow");
                     if(label) label.textContent = expandido ? "Mostrar menos eventos" : "Ver todos os eventos";
-                    if(arrow) arrow.textContent = expandido ? "⌃" : "⌄";
+                    if(arrow) arrow.textContent = expandido ? "🔼" : "🔽";
                 }
             }
 
@@ -1079,6 +1226,7 @@
                             dataFormatada: formatarData(evento.data),
                             hora: String(evento.hora || "").trim(),
                             nome: String(evento.nome || "").trim(),
+                            explicacao: String(evento.explicação || evento.explicacao || evento["texto explicativo"] || "").trim(),
                             linkRaw,
                             temInscricao,
                             hoje: ehHoje(evento.data)
